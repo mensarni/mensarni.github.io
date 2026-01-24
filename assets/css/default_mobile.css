@@ -1,0 +1,107 @@
+/* Global mobile Source Page */
+@media (max-width: 1024px) {
+	.container-fluid{
+		display: none;
+		visibility: hidden;
+	}
+	.container-small{
+		display: block;
+		visibility: visible;
+	}
+	.container-small i:hover{
+		cursor: pointer;
+	}
+	.screen_fourth {
+		padding-top: 300px;
+	}
+	.carousel-caption {
+		display: block !important;
+	}
+	.carousel-caption h5 {
+		font-size: 30px;
+	}
+	.carousel-caption h5 span {
+		font-size: 34px;
+	}
+	.carousel-caption p {
+		font-size: 16px;
+	}
+	.menu_small_dropdown {
+		display: none;
+		opacity: 0;
+		background-color: rgba(67,67,67,1.00);
+	}
+	.menu_small_dropdown i{margin-left:20px;}
+	.menu_small:hover > .menu_small_dropdown{
+		display: inline-block;
+		opacity: 1;
+		position: absolute;
+		width: 200px;
+		height: auto;
+		right: 0px;
+		text-align: right;
+	}
+	.container-small:hover > .menu_small_dropdown{
+		display: inline-block;
+		opacity: 1;
+		position: absolute;
+		width: 200px;
+		height: auto;
+		right: 0px;
+		text-align: right;
+	}
+	.container-small .btn {
+		font-weight: bold!important;
+		color: rgba(255,255,255,1.00)!important;
+		border-radius: 0px!important;
+	}
+	.headdopdown .btn, .dropdown-toggle{text-align: right !important; border-radius: 0px !important;}
+	.dropdown-menu {right: 150px;}
+	
+	.IbowCarousel2 {
+	height: auto !important;
+	}
+	a.learnmore {
+	margin: 5px;
+	margin-bottom: 20px;
+	font-size: 18px;
+	}
+	.screen_page .boxs{
+	width: 90%;
+	}
+	.area-02, .area-03 {
+	width: 135vw;
+	height: 135vw;
+	right: 0px;
+	left: 0px;	
+	clip-path: polygon(25% 0%, 75% 0%, 75% 50%, 75% 100%, 25% 100%, 0% 50%);
+	}
+	img.area{
+	height: 80vh;
+	}
+	
+	.area-04 {
+	width: 100vw;
+	height: 100vw;
+	display: block;
+	position: absolute;
+	z-index: -10;
+	right: 25vw;
+	clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+	background: linear-gradient(to right, #f80503 0%, #ff7d09 100%);
+	}
+	.area-41 {
+	width: 100vw;
+	height: 100vw;
+	display: block;
+	position: absolute;
+	z-index: -10;
+	left: 25vw;
+	margin-top: 100vw;
+	clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+	background: linear-gradient(to right, #2774ae,#002E5D,#002E5D);
+	}
+	.screen_ten {
+	padding: 20px 5px 20px 5px;
+	}
+}	
