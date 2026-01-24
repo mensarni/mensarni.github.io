@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<nav class="navbar navbar-expand-lg bg-body-tertiary w-100 m-0 p-0 border-bottom-1" style="height:60px; background-color: #f1f1f1!important">
+		<div class="container-small">
+		<img src="../assets/image/logo/msn.webp" width="60px" style="position: relative; left: 10px;" onerror="this.onerror=null; this.src='../../assets/image/logo/msn.webp';">
+				<i class="bi bi-list menu_small" id="menu_small" style="font-size: 42px; position: absolute; right: 10px" onClick="openmenu();"></i>
+				<div class="menu_small_dropdown" id="menu_small_dropdown">
+					<div class="btn-group headdopdown" style="text-align: left">
+					  <a class="btn border-0" role="button" href="/">Beranda  <i class="bi bi-house"></i></a>
+					</div>
+
+					<div class="btn-group headdopdown dropdown">
+					  <span class="btn border-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						  Tentang Kami  <i class="bi bi-diagram-3"></i></span>
+					  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+						<li><a class="dropdown-item" href="/pages/profile">Profil Perusahaan</a></li>
+						<li><a class="dropdown-item" href="/pages/structure_company">Struktur Holding</a></li>
+						<li><a class="dropdown-item" href="/pages/legality">Legalitas & Compliance</a></li>
+					  </ul>
+					</div>
+
+					<div class="btn-group headdopdown dropdown">
+					  <span class="btn border-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						  Layanan  <i class="bi bi-briefcase"></i></span>
+					  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+						<li><a class="dropdown-item" href="/pages/fastco">Outsourcing (Fastco)</a></li>
+						<li><a class="dropdown-item" href="/pages/mensana">Trading (Mensana)</a></li>
+					  </ul>
+					</div>
+
+					<div class="btn-group headdopdown dropdown">
+					  <span class="btn border-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						  Karir & Relasi  <i class="bi bi-briefcase"></i></span>
+					  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+						<li><a class="dropdown-item" href="/pages/career">Karier (Fastco)</a></li>
+						<li><a class="dropdown-item" href="/pages/client_project">Klien & Proyek</a></li>
+						<li><a class="dropdown-item" href="/pages/cta">Ajukan Penawaran</a></li>
+					  </ul>
+					</div>
+
+					<div class="btn-group headdopdown">
+					  <a class="btn border-0" href="#footer" role="button" data-toggle='tab'>Kontak  <i class="bi bi-people"></i></a>
+					</div>  
+				 </div>
+		</div>	
+	
+  		<div class="container-fluid">
+			<div class="btn-group headlogo"></div>
+				<div class="btn-group headdopdown">
+				  <a class="btn text-center border-0" role="button" href="/"><i class="bi bi-house"></i> Beranda</a>
+				</div>
+
+				<div class="btn-group headdopdown dropdown">
+				  <span class="btn text-center border-0 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					  <i class="bi bi-diagram-3"></i> Tentang Kami</span>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+					<li><a class="dropdown-item" href="/pages/profile">Profil Perusahaan</a></li>
+					<li><a class="dropdown-item" href="/pages/structure_company">Struktur Holding</a></li>
+					<li><a class="dropdown-item" href="/pages/legality">Legalitas & Compliance</a></li>
+				  </ul>
+				</div>
+
+				<div class="btn-group headdopdown dropdown">
+				  <span class="btn text-center border-0 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					  <i class="bi bi-briefcase"></i> Layanan</span>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+					<li><a class="dropdown-item" href="/pages/fastco">Outsourcing (Fastco)</a></li>
+					<li><a class="dropdown-item" href="/pages/mensana">Trading (Mensana)</a></li>
+				  </ul>
+				</div>
+
+				<div class="btn-group headdopdown dropdown">
+				  <span class="btn text-center border-0 dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					  <i class="bi bi-briefcase"></i> Karir & Relasi</span>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+					<li><a class="dropdown-item" href="/pages/career">Karier (Fastco)</a></li>
+					<li><a class="dropdown-item" href="/pages/client_project">Klien & Proyek</a></li>
+					<li><a class="dropdown-item" href="/pages/cta">Ajukan Penawaran</a></li>
+				  </ul>
+				</div>
+
+				<div class="btn-group headdopdown">
+				  <a class="btn text-center border-0" href="#footer" role="button" data-toggle='tab'><i class="bi bi-people"></i> Kontak</a>
+				</div>                 	  
+  		</div>								 
+</nav>
+
+<script>
+$(function(){
+    $('.dropdown').hover(function() {
+        $(this).addClass('open');
+    },
+    function() {
+        $(this).removeClass('open');
+    });
+});
+
+</script>
+
+<script>
+function openmenu() {
+  document.getElementById("menu_small_dropdown").classList.toggle("show");
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.menu_small')) {
+    var dropdowns = document.getElementsByClassName("menu_small_dropdown");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+};
+</script>
