@@ -12,7 +12,7 @@
 		cursor: pointer;
 	}
 	.screen_fourth {
-		padding-top: 300px;
+		padding-top: 100px;
 	}
 	.carousel-caption {
 		display: block !important;
@@ -30,6 +30,7 @@
 		display: none;
 		opacity: 0;
 		background-color: rgba(67,67,67,1.00);
+		margin-top: 60px;
 	}
 	.menu_small_dropdown i{margin-left:20px;}
 	.menu_small:hover > .menu_small_dropdown{
@@ -64,10 +65,22 @@
 	a.learnmore {
 	margin: 5px;
 	margin-bottom: 20px;
-	font-size: 18px;
+	}
+	a.more{
+	font-size: 14px;
+	width: 240px;
 	}
 	.screen_page .boxs{
 	width: 90%;
+	}
+	.screen_page h3{
+    max-width: 300px!important;
+    margin: 5px!important;
+	font-size: 100%;
+	}
+	.screen_page h2 {
+    max-width: 300px!important;
+    margin: 5px!important;
 	}
 	.area-02, .area-03 {
 	width: 135vw;
@@ -86,8 +99,8 @@
 	display: block;
 	position: absolute;
 	z-index: -10;
-	right: 25vw;
-	clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+	margin-right: 0%;
+	clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 25% 25%)!important
 	background: linear-gradient(to right, #f80503 0%, #ff7d09 100%);
 	}
 	.area-41 {
@@ -96,12 +109,57 @@
 	display: block;
 	position: absolute;
 	z-index: -10;
-	left: 25vw;
+	margin-left: 0%;
 	margin-top: 100vw;
-	clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+	clip-path: polygon(25% 0%, 75% 0%, 75% 50%, 75% 100%, 25% 100%, 0% 50%)!important;
 	background: linear-gradient(to right, #2774ae,#002E5D,#002E5D);
 	}
 	.screen_ten {
 	padding: 20px 5px 20px 5px;
 	}
-}	
+	.scr-01 .carousel-caption, .scr-02 .carousel-caption, .scr-03 .carousel-caption {
+	right: 1%;
+  	left: 1%;
+	}
+	.screen_sixth {
+  	padding-top: 0px !important;
+	}
+	.containerscr3 {
+	padding: 0px !important;
+	}
+	.containerscr3 span {
+	padding: 10px !important;
+	width: 300px !important;
+	}
+	#IbowCarousel {
+	height: calc(100vh - 140px) !important;
+	}
+	.screen_eight {
+	  padding: 10px;
+	  }
+	.screen_eight div {
+	  width: 80%!important;
+	  margin: 10px 0px!important;
+	 }
+	 .screen_eight div div {
+	  width: 100%!important;
+	  margin: 10px 0px!important;
+	 }
+	.screen_eight div p {
+	  max-width: auto!important;
+	  margin: 5px auto;
+  	}
+	.screen_seventh {
+	 padding: 20px!important;
+	}
+	.screen_sixth p {
+	padding: 10px;
+	}
+	.hvr-bounce-to-bottom p {
+	  padding: 0px 0px 10px 0px;
+	}
+	.sec-title p {
+	  font-size: 18px !important;
+	  margin: 50px 10px;
+	}	
+}

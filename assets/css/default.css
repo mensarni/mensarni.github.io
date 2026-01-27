@@ -1,4 +1,23 @@
 /* Global Source Page */
+.loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255,99,0,.95);  /* Add an overlay effect */
+  display: flex; /* Use flexbox to center the spinner */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it is on top of other elements */
+  /* Add a class to hide the loader with a fade-out effect */
+  transition: opacity 0.75s, visibility 0.75s;
+}
+
+.loader-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
 html {
 scroll-behavior: smooth;
 font-family: "Fira Sans", sans-serif;
@@ -141,7 +160,6 @@ a {
 /* customs */
 #content {
 max-width: auto;
-min-width: 360px;
 margin-left: auto;
 margin-right: auto;
 }
@@ -253,6 +271,7 @@ font-size: 20px;
 font-family: "Sansation", Cursive;
 font-weight:lighter;
 animation: bounceOut 2s;
+margin-top: 10px;
 text-shadow: 2px 2px rgba(0,0,0,.60);
 }
 .carousel-caption p{
@@ -590,7 +609,7 @@ vertical-align: text-top;
 }
 .containerscr3 span{
 max-width: 50%; 
-min-width: 360px;
+min-width: 300px;
 padding: 30px;
 display: inline-block;
 font-weight: lighter;
@@ -612,7 +631,7 @@ margin-right: 30px;
 font-size: 90px;
 }
 .gatescrcol {
-width: 320px;
+width: 280px;
 height :160px;
 display: inline-block;
 vertical-align: middle;
@@ -622,14 +641,14 @@ padding-top: 15px;
 padding-bottom: 15px;
 }
 .gatescrcol img {
-width: 100px;
+width: 80px;
 display: inline-block;
 vertical-align:middle;
 margin-top: 10px;
 }
 .gatescrcol span {
 display: inline-block;
-width: 200px;
+width: 180px;
 vertical-align: middle;
 text-align: left;
 padding: auto;
@@ -653,9 +672,9 @@ background-color: rgba(0,0,0,.9);
 .screen_fourth {
 width: 100vw; 
 height: auto;
-padding: 20px;
+padding: auto;
 padding-top: 200px;
-margin: auto;
+margin: 20px 0px 20px 0px;
 }
 .photoclient img{
 height: auto;
@@ -688,7 +707,7 @@ min-height: 250px;
 min-width: 320px;
 max-width: 400px; 
 display: inline-block;
-margin: 10px;
+margin: 0px;
 padding: 15px;
 padding-bottom: 40px;
 text-align: left;
@@ -719,9 +738,9 @@ top: 50%
 display:block;
 width: 100vw; 
 height: auto;
-padding: 20px;
+padding: 10px;
 padding-top: 250px !important;
-margin: auto;
+margin: 0px 0px 20px 0px;
 background: linear-gradient( rgba(0, 0, 0, 0.988) 50%, rgba(0, 0, 0, 0)100%);
 color: #FFFFFF;
 }
@@ -785,7 +804,7 @@ margin-top: 5px;
 .screen_eight {
 width: 100vw; 
 height: auto;
-padding: 30px;
+padding: 0px;
 margin: auto;
 background: url(../image/etc/S4_02.webp), linear-gradient( rgba(0, 0, 0, 1) 100%, rgba(0, 0, 0, .1)100%);
 color: #FFFFFF;
@@ -797,17 +816,15 @@ border-bottom: rgba(255,99,0,.80) solid 5px;
 border-top: rgba(255,99,0,.80) solid 5px;
 }
 .screen_eight div{
-max-width: 50%;
-min-width: 320px;
+max-width: 600px;
 display: inline-block;
 text-align: left;
 margin: 30px auto;
-padding: 10px auto;
 vertical-align: text-top !important;
 }
 .screen_eight div p{
 max-width: 400px;
-min-width: 320px;
+min-width: auto;
 }
 .screen_eight div i{
 font-size: 50px;
@@ -843,7 +860,7 @@ width: 100vw;
 height: auto;
 padding: 20px 50px 20px 50px;
 margin: auto;
-margin-left: 5px;
+margin-left: 0px;
 text-align:left;
 vertical-align: text-top;
 border-top: rgba(255,99,0,.80) solid 5px;

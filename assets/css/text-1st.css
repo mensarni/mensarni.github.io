@@ -1,0 +1,65 @@
+#text_1st{ 
+position:static!important;
+display: block;
+z-index:50;
+}
+
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;  
+}
+
+
+
+[aria-hidden] {
+  display: flex;
+  gap: 0.02ch;
+  align-items: center;
+  color: black;
+}
+
+
+.stretch-o {
+  height: 1.12ch;
+  width: calc(var(--stretch) * 1.16ch);
+  translate: 0 -0.01ch;
+  border: 0.25ch solid black;
+  border-radius: 1ch;
+  transition: width 0.2s;
+  position: relative;
+}
+
+
+
+.stretch-o:after,
+.stretch-o:before {
+  content: "";
+  border: 0.25ch solid var(--color);
+  position: absolute;
+  inset: -0.25ch;
+  border-radius: 1ch;
+  opacity: calc(-1 + var(--stretch));
+  transition: opacity 0.2s;
+}
+
+.stretch-o:before {
+  --color: var(--color-one);
+}
+
+.stretch-o:after {
+  --color: var(--color-two);
+  mask:
+    radial-gradient(
+      circle at top left,
+      black,
+      transparent
+    );
+}
