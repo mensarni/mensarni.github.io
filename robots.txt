@@ -1,0 +1,21 @@
+user-agent: *
+allow: /
+allow: /pages/career/
+allow: /pages/client_project/
+allow: /pages/cta/
+allow: /pages/fastco/
+allow: /pages/legality/
+allow: /pages/mensana/
+allow: /pages/profile/
+allow: /pages/structure_company/
+
+disallow: /html/*.
+disallow: /assets/css/*.
+disallow: /assets/font/*.
+disallow: /assets/js/*.
+disallow: /404.html
+disallow: /403.html
+disallow: https://login.mensarni.com/*.
+
+sitemap: https://mensarni.com/sitemap.xml
+
