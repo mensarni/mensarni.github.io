@@ -8,8 +8,8 @@
     <meta itemprop="keywords" name="keywords" content="supllier alat kesehatan terpercaya, distributor alat kesehatan resmi, layanan pengadaan alat kesehatan, penyedia alat kesehatan berkualitas, solusi medical supply rumah sakit, kelengkapan alat medis RS, kebutuhan alat kesehatan klinik, peralatan medis laboratorium">
     <meta itemprop="keywords" name="keywords" content="perusahaan distributor alat kesehatan untuk rumah sakit dan klinik, pengadaan alat kesehatan dengan jaminan kualitas & legalitas, solusi supply chain alat kesehatan nasional, distributor alat medis untuk tender dan B2B, perusahaan medical trading & pengadaan, layanan distribusi alat kesehatan dengan sertifikasi">
 
-	<meta name="google-site-verification" content="" />
-	<meta name="msvalidate.01" content="" /> 
+<meta name="google-site-verification" content="cQkci5b5-OPfdHHE27UYQKj7Ka_Lx9pfAs5BgsiznJI" />
+<meta name="msvalidate.01" content="69E42D0CA24FDD2755E6B1351973A812" />
 
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,8 +22,9 @@
 <link rel="canonical" href="https://mensarni.com"/>
 <link rel="manifest" href="https://mensarni.com/manifest.json" crossorigin="anonymous"/>
 <link rel="manifest" href="https://mensarni.com/manifest.webmanifest" crossorigin="anonymous"/> 
-<link rel="icon" type="image/png" href="../../assets/icon/mensana_icon.png"/>
-<link rel="shortcut icon" href="../../assets/icon/mensana_icon.png" type="image/x-icon"/>
+
+<link rel="icon" type="image/x-icon" href="../../assets/icon/mensana.ico"/>
+<link rel="shortcut icon" href="../../assets/icon/mensana.ico" type="image/x-icon"/>
 
 <link href="https://github.com" rel="dns-prefetch"/>
 <link href="https://mensarni.com" rel="dns-prefetch"/>
@@ -34,10 +35,10 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta name="image" property="og:image" content="assets/icon/mensana_icon.png">
+<meta name="image" property="og:image" content="../../assets/image/share/MENSANA.webp">
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:card" content="../../assets/image/share/MENSANA.webp">
 
 <!-- Mendeklarasikan warna yang muncul pada address bar Chrome versi seluler -->
 
@@ -49,7 +50,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
-<link itemprop="logo" rel="apple-touch-icon" href="../../assets/icon/mensana_icon.png" crossorigin="anonymous"/> 
+<link itemprop="logo" rel="apple-touch-icon" href="../../assets/icon/mensana.ico" crossorigin="anonymous"/> 
 
 <!-- Mendeklarasikan untuk Windows -->
 <meta name="msapplication-TileColor" content="#000000">
@@ -78,14 +79,31 @@ wrap: false
 </script>
 </head>
 <body onLoad="includeHTML()">
-	
+<script>
+window.addEventListener('load', () => {
+  const loader = document.querySelector('.loader-wrapper');
+  // Add the hidden class to start the transition
+  loader.classList.add('loader-hidden');
+
+  // Optional: Listen for the transition end to completely remove the element from the DOM
+  loader.addEventListener('transitionend', () => {
+    loader.remove();
+  });
+});
+</script>
+<div class="loader-wrapper">
+  <!-- Bootstrap Spinner component -->
+  <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>	
 <!-- HEADER -->
 <div w3-include-html="/pages/header.html"></div> 
 <!------------------ Start Content ---------------------------------->
 <div class="screen_page">
 <center>
 <img src="../../assets/image/logo/mensana.webp" height="150" alt="Mensana" style="margin-bottom:80px;"/>
-<h2>Menjadi Penyedia Kebutuhan Barang Dan Jasa Yang Islami, Terpercaya Dan Berkualitas</h2>
+<h2 class="mb-4">Menjadi Penyedia Kebutuhan Barang Dan Jasa Yang Islami, Terpercaya Dan Berkualitas</h2>
 <div class="area-02"></div>
 	<div class="boxs  card_left">
 	<h3><span>Pelayanan  </span> Trading</h3>
