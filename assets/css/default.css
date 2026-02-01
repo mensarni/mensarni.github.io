@@ -225,19 +225,19 @@ height: calc(100vh - 60px);
 }
 .scr-01 {
 background-image: url(../image/slide/slide1.webp);
-background-position: center center;
+background-position: top center;
 background-repeat: no-repeat;
 background-size: cover;
 }
 .scr-02 {
 background-image: url(../image/slide/slide2.webp);
-background-position: center center;
+background-position: top center;
 background-repeat: no-repeat;
 background-size: cover;
 }
 .scr-03 {
 background-image: url(../image/slide/slide3.webp);
-background-position: center center;
+background-position: top center;
 background-repeat: no-repeat;
 background-size: cover;
 }
@@ -578,9 +578,9 @@ color: rgba(255,99,0,1.00);
 .screen_three {
 width: 100vw; 
 height: auto;
-background-image: linear-gradient( rgba(0, 0, 0, 0.7) 100%, rgba(0, 0, 0, 0.8)100%), url(../image/etc/S3-01.webp);
+background-image: linear-gradient( rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 1)100%), url(../image/etc/S3-01.webp);
 background-attachment:fixed;
-background-position:center;
+background-position:center center;
 background-repeat:no-repeat;
 background-size: cover;
 color: #FFFFFF;
