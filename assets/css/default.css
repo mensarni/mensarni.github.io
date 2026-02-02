@@ -661,12 +661,14 @@ font-weight: bold;
 }
 .col1{
 background-color: rgba(124, 124, 124, .9);
+padding-top: 30px;
 }
 .col2{
 background: linear-gradient(to right, #f80503 0%, #ff7d09 100%);
 }
 .col3{
-background-color: rgba(0,0,0,.9);
+background-color: rgba(45, 85, 255,.9);
+padding-top: 35px;
 }
 
 .screen_fourth {
