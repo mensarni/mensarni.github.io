@@ -1,4 +1,12 @@
-user-agent: *
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: *
+Disallow: /
+
 allow: /
 allow: /pages/career/
 allow: /pages/client_project/
@@ -18,4 +26,5 @@ disallow: /403.html
 disallow: https://login.mensarni.com/*.
 
 sitemap: https://mensarni.com/sitemap.xml
+
 
