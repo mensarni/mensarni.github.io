@@ -1,0 +1,47 @@
+@media only screen and (max-width: 1300px) { /* Adjust breakpoint as needed */
+/* ---------- RESPONSIVE ---------- */
+  .info-box{
+    transform:scale(.8);
+    transform-origin:left top;
+	height: auto;
+   	clip-path: none; 
+	padding-bottom: 10px;
+	position:absolute;
+	z-index: 20;
+	padding-top: 10px;
+  }
+  .containner{
+  margin:0px;
+  height: 100vh;
+  }
+  .login-box{
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  background: linear-gradient(to right, rgba(248, 5, 3, 0.8) 0%, rgba(255, 125, 9, 0.8) 100%);
+  height: auto;
+  bottom: 0px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  position: fixed;
+  }
+  .info-box,
+  .login-box{
+    float:none;
+    width:100%;
+    transform:none;
+	height: auto;
+  }
+  .login-box #formpegawai, .login-box #formpelamar, .login-box #formklien{
+  margin: 0px;
+  height: inherit;
+  width:100%;
+  padding: 20px;
+  }
+  .page_login_img {
+  display: none;
+  }
+  .dash-buttons{flex-direction:column}
+  .switch {
+	right: 0px;
+   }
+  .connect-us{ display:none}
+ }
