@@ -9,68 +9,77 @@ function toggleChanges(el) {
     el.innerText = tampil ? 'Sembunyikan' : 'Lihat Semua';
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    var btnHapus = document.getElementById('btnHapusAudit');
-    var checkAll = document.getElementById('checkAllAudit');
+// SELECT ALL AUDIT
+$(document)
+.off('change.audit', '#checkAllAudit')
+.on('change.audit', '#checkAllAudit', function () {
+    var status = this.checked;
+    $('.checkAudit').prop('checked', status);
+});
 
-    if (checkAll) {
-        checkAll.addEventListener('change', function () {
-            document.querySelectorAll('.checkAudit').forEach(function (checkbox) {
-                checkbox.checked = checkAll.checked;
-            });
-        });
+// SINKRONISASI SELECT ALL
+$(document)
+.off('change.auditItem', '.checkAudit')
+.on('change.auditItem', '.checkAudit', function () {
+    var total = $('.checkAudit').length;
+    var terpilih = $('.checkAudit:checked').length;
+
+    $('#checkAllAudit').prop(
+        'checked',
+        total > 0 && total === terpilih
+    );
+});
+
+// HAPUS AUDIT
+$(document)
+.off('click.audit', '#btnHapusAudit')
+.on('click.audit', '#btnHapusAudit', function () {
+    var btnHapus = this;
+    var terpilih = $('.checkAudit:checked');
+
+    if (!terpilih.length) {
+        alert('Pilih data audit yang ingin dihapus!');
+        return;
     }
 
-    if (btnHapus) {
-        btnHapus.addEventListener('click', function () {
-            var terpilih = document.querySelectorAll('.checkAudit:checked');
-
-            if (!terpilih.length) {
-                alert('Pilih data audit yang ingin dihapus!');
-                return;
-            }
-
-            if (!confirm('Hapus ' + terpilih.length + ' data audit yang dipilih?')) {
-                return;
-            }
-
-            var tombolAwal = this.innerHTML;
-            disableSubmit(this);
-
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.target = 'ProsesFrame';
-
-            var csrf = document.createElement('input');
-            csrf.type = 'hidden';
-            csrf.name = 'csrf';
-            csrf.value = document.querySelector('meta[name="csrf-token"]')?.content || '';
-            form.appendChild(csrf);
-
-            terpilih.forEach(function (checkbox) {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'audit_id[]';
-                input.value = checkbox.value;
-                form.appendChild(input);
-            });
-
-            window.callbackAuditSelesai = function () {
-                btnHapus.disabled = false;
-                btnHapus.innerHTML = tombolAwal;
-                window.callbackAuditSelesai = null;
-            };
-
-            document.body.appendChild(form);
-            form.submit();
-            form.remove();
-        });
+    if (!confirm('Hapus ' + terpilih.length + ' data audit yang dipilih?')) {
+        return;
     }
 
-    // RESET FILTER SAAT AWAL LOAD
-    if (window.jQuery) {
-        $('.filter-pegawai').each(function () {
-            this.selectedIndex = 0;
-        });
-    }
+    var tombolAwal = btnHapus.innerHTML;
+
+    disableSubmit(btnHapus);
+
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.target = 'ProsesFrame';
+
+    var csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = 'csrf';
+    csrf.value = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    form.appendChild(csrf);
+
+    terpilih.each(function () {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'audit_id[]';
+        input.value = this.value;
+        form.appendChild(input);
+    });
+
+    window.callbackAuditSelesai = function () {
+        btnHapus.disabled = false;
+        btnHapus.innerHTML = tombolAwal;
+        window.callbackAuditSelesai = null;
+    };
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+});
+
+// RESET FILTER
+$('.filter-pegawai').each(function () {
+    this.selectedIndex = 0;
 });
