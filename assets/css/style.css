@@ -1057,3 +1057,61 @@ body.tema-gelap #loadingOverlay {
 .modal .btn-close {margin-right:5px;}
 .modal .modal-content {background-color:rgba(204, 204, 204, .95);}
 .modal .modal-footer {background-color:transparent!important}
+
+/* =========================
+   POPOVER
+========================= */
+.popover{
+	background:#000000!important;
+}
+.popover .popover-header{
+    background:orangered;
+    color:#fff;
+    font-weight:600;
+}
+.popover-detail{
+    --bs-popover-border-color: orangered;
+    --bs-popover-header-color: #fff;
+    --bs-popover-body-padding-x: 15px;
+    --bs-popover-body-padding-y: 15px;
+    border-radius:10px;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+	background-color:#000000;
+	color:#FFFFFF;
+}
+/* Arrow atas */
+.bs-popover-top > .popover-arrow::before{
+    border-top-color:#0d6efd !important;
+}
+/* Arrow bawah */
+.bs-popover-bottom > .popover-arrow::before{
+    border-bottom-color:#0d6efd !important;
+}
+/* Arrow kiri */
+.bs-popover-start > .popover-arrow::before{
+    border-left-color:#0d6efd !important;
+}
+/* Arrow kanan */
+.bs-popover-end > .popover-arrow::before{
+    border-right-color:#0d6efd !important;
+}
+/* ---------- MODAL ---------- */
+.modal-backdrop {
+--bs-backdrop-bg: #000!important!important!important;;
+--bs-backdrop-opacity: .4!important!important!important;;
+}
+.btn-close {
+border-radius: 50%;
+color: #FFFFFF;
+background-color: #FFFFFF;
+}
+/* ---------- FORM LABEL ---------- */
+/* Automatically targets any input with the readonly attribute */
+.form-control:read-only {
+  background-color: rgba(0, 0, 255, 0.03); /* Matches Bootstrap's $gray-100 / bg-light */
+}
+/* Automatically targets the sibling label of a readonly input */
+form label::after{
+  background-color: transparent !important;
+  background-color: rgba(0, 0, 0, 0)!important;
+}
