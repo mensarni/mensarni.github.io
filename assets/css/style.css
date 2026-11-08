@@ -78,7 +78,7 @@
 
 /* ==================================================
    FINAL PRODUCTION CSS
-   Stable • Clean • IIS Safe
+   Stable â€¢ Clean â€¢ IIS Safe
 ================================================== */
 
 /* ---------- RESET ---------- */
@@ -1043,3 +1043,17 @@ body.tema-gelap #loadingOverlay {
         gap: 7px;
     }
 }
+.modal .card {border:none!important;background-color :transparent!important}
+.modal .card-header {background-color :transparent!important; padding-bottom: 1px; padding-left:0px!important; color:orangered!important; border-bottom: none!important;}
+.modal .card-body {background-color :white; margin-top: 3px; border-radius: 10px}
+.modal .modal-body input,
+.modal .modal-body select, 
+.modal .modal-body textarea
+	{background-color :transparent!important}
+.modal .modal-body form .card 
+	{background-color :transparent!important}	
+.modal .modal-body form .card-body 
+	{background-color :white!important; border-radius: 15px!important; margin-top: 5px!important;}		
+.modal .btn-close {margin-right:5px;}
+.modal .modal-content {background-color:rgba(204, 204, 204, .95);}
+.modal .modal-footer {background-color:transparent!important}
