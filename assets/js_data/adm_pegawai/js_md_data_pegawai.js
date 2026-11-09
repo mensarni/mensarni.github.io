@@ -54,15 +54,16 @@ window.simpanStatusTombolPegawai = function(btn){
    PEMULIHAN TOMBOL PROSES / CETAK
 ========================================================= */
 window.restoreTombolPegawai = function(){
-    const btn = window.tombolProsesPegawaiAktif;
-    if(!btn){
-        window.htmlTombolProsesPegawai = '';
-        return;
-    }
-    btn.disabled = false;
-    $(btn).prop('disabled',false).removeClass('disabled').removeAttr('aria-disabled');
-    if(window.htmlTombolProsesPegawai !== ''){
-        btn.innerHTML = window.htmlTombolProsesPegawai;
+    if(window.tombolProsesPegawaiAktif){
+        const btn = window.tombolProsesPegawaiAktif;
+        $(btn)
+            .prop('disabled', false)
+            .removeClass('disabled')
+            .removeAttr('aria-disabled');
+
+        if(window.htmlTombolProsesPegawai !== ''){
+            $(btn).html(window.htmlTombolProsesPegawai);
+        }
     }
     window.tombolProsesPegawaiAktif = null;
     window.htmlTombolProsesPegawai = '';
@@ -429,13 +430,15 @@ async function cetakPdfDataPegawai(btn){
 /* =========================================================
    INISIALISASI HALAMAN PEGAWAI
 ========================================================= */
-window.initHalamanPegawai();
-$(function(){
-    window.initHalamanPegawai();
-    if(typeof window.initPopoverDetailPegawai==='function'){
-        window.initPopoverDetailPegawai();
-    }
-    if(typeof window.initFilterPegawai==='function'){
-        window.initFilterPegawai();
-    }
-});
+$(document)
+    .off('click.pegawaiSpinner', '.btn-proses-pegawai')
+    .on('click.pegawaiSpinner', '.btn-proses-pegawai', function(){
+        window.tombolProsesPegawaiAktif = this;
+        window.htmlTombolProsesPegawai = $(this).html();
+    });
+
+$(document)
+    .off('hide.bs.modal.pegawaiSpinner', '.modal')
+    .on('hide.bs.modal.pegawaiSpinner', '.modal', function(){
+        window.restoreTombolPegawai();
+    });
