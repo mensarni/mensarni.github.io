@@ -181,7 +181,10 @@ function bukaProsesDataPegawai(id,userData,btn){
         return false;
     }
 
-    if(btn) disableSubmit(btn);
+   if(btn){
+    window.simpanStatusTombolPegawai(btn);
+    disableSubmit(btn);
+}
 
     closeAllModal(function(){
         window.pegawaiDataId = id;
@@ -246,7 +249,10 @@ function bukaCetakDataPegawai(id,userData,btn){
         return false;
     }
 
-    if(btn) disableSubmit(btn);
+    if(btn){
+    window.simpanStatusTombolPegawai(btn);
+    disableSubmit(btn);
+}
 
     closeAllModal(function(){
         window.pegawaiDataId = id;
@@ -329,7 +335,10 @@ function simpanDataPegawai(btn){
     form.action = '';
     form.target = 'ProsesFrame';
 
-    if(btn) disableSubmit(btn);
+   if(btn){
+    window.simpanStatusTombolPegawai(btn);
+    disableSubmit(btn);
+}
 
     return true;
 }
