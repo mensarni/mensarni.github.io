@@ -1,4 +1,3 @@
-
 /* =========================================================
    DATA GLOBAL PEGAWAI
 ========================================================= */
@@ -63,7 +62,7 @@ window.initHalamanPegawai=function(){
    SIMPAN KONDISI TOMBOL
 ========================================================= */
 window.simpanStatusTombolPegawai = function(btn){
-    if(!btn) return;
+    if(!btn)return;
     if(window.tombolProsesPegawaiAktif && window.tombolProsesPegawaiAktif !== btn){
         window.restoreTombolPegawai();
     }
@@ -114,12 +113,28 @@ if(!window.jQuery){
         return false;
     });
 
+    /* CETAK DATA PEGAWAI */
+    $(document).off('click.pegawai','.btn-cetak-pegawai').on('click.pegawai','.btn-cetak-pegawai',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        const btn=this;
+        const id=$(btn).attr('data-id');
+        const userData=$(btn).attr('data-user');
+        if(!id){
+            window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>ID pegawai tidak ditemukan.",status:"danger"},"*");
+            return false;
+        }
+        window.simpanStatusTombolPegawai(btn);
+        bukaCetakDataPegawai(id,userData,btn);
+        return false;
+    });
+
     /* SIMPAN DATA PEGAWAI */
     $(document).off('click.pegawai','#btnSimpanDataPegawai').on('click.pegawai','#btnSimpanDataPegawai',function(e){
         return simpanDataPegawai(this);
     });
 
-    /* CETAK DATA PEGAWAI */
+    /* CETAK PDF DATA PEGAWAI */
     $(document).off('click.pegawai','#btnCetakPegawai,#btnCetakDataPegawai').on('click.pegawai','#btnCetakPegawai,#btnCetakDataPegawai',function(e){
         e.preventDefault();
         e.stopPropagation();
@@ -157,7 +172,7 @@ if(!window.jQuery){
    PARSE DATA PEGAWAI
 ========================================================= */
 function parseDataPegawai(userData){
-    if(typeof userData==='object' && userData!==null) return userData;
+    if(typeof userData==='object' && userData!==null)return userData;
     try{
         return JSON.parse(userData || '{}');
     }catch(e){
@@ -176,11 +191,11 @@ function bukaProsesDataPegawai(id,userData,btn){
         window.restoreTombolPegawai();
         return false;
     }
-    if(btn) disableSubmit(btn);
+    if(btn)disableSubmit(btn);
     closeAllModal(function(){
         window.pegawaiDataId = id;
         const form = document.getElementById('formDataPegawai');
-        if(form) form.reset();
+        if(form)form.reset();
         $('#pegawai_id').val('');
         $('#pegawai_user_id').val(id);
         WarnaPrimary();
@@ -229,11 +244,11 @@ function bukaCetakDataPegawai(id,userData,btn){
         window.restoreTombolPegawai();
         return false;
     }
-    if(btn) disableSubmit(btn);
+    if(btn)disableSubmit(btn);
     closeAllModal(function(){
         window.pegawaiDataId = id;
         const form = document.getElementById('formDataPegawai');
-        if(form) form.reset();
+        if(form)form.reset();
         $('#pegawai_id').val('');
         $('#pegawai_user_id').val(id);
         WarnaSuccess();
@@ -295,7 +310,7 @@ function simpanDataPegawai(btn){
     form.method = 'POST';
     form.action = '';
     form.target = 'ProsesFrame';
-    if(btn) disableSubmit(btn);
+    if(btn)disableSubmit(btn);
     return true;
 }
 
@@ -365,7 +380,7 @@ async function cetakPdfDataPegawai(btn){
         console.error('jsPDF tidak ditemukan.');
         return false;
     }
-    if(!btn) return false;
+    if(!btn)return false;
     const token = ++window.pdfPegawaiToken;
     window.simpanStatusTombolPegawai(btn);
     $(btn).prop('disabled',true).addClass('disabled').attr('aria-disabled','true').html('<span class="spinner-border spinner-border-sm me-1"></span>Membuat PDF...');
@@ -417,7 +432,7 @@ async function cetakPdfDataPegawai(btn){
             if(token!==window.pdfPegawaiToken || !modalElement.classList.contains('show')){
                 return false;
             }
-            if(halaman>0) pdf.addPage();
+            if(halaman>0)pdf.addPage();
             const posisiY = margin-(halaman*areaHeight);
             pdf.addImage(imgData,'JPEG',margin,posisiY,pdfWidth,pdfHeight,undefined,'FAST');
         }
