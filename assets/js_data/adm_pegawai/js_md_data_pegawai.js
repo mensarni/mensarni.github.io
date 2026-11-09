@@ -1,3 +1,4 @@
+
 /* =========================================================
    DATA GLOBAL PEGAWAI
 ========================================================= */
@@ -12,41 +13,52 @@ window.pdfPegawaiToken = window.pdfPegawaiToken || 0;
 /* =========================================================
    INISIALISASI MODAL SETELAH CT DIMUAT
 ========================================================= */
-window.initHalamanPegawai = function(){
-    const modalElement = document.getElementById('modal');
-    if(!modalElement) return false;
+window.initHalamanPegawai=function(){
+    const modalElement=document.getElementById('modal');
+    if(!modalElement)return false;
+
     if(!window.bootstrap || !bootstrap.Modal){
         console.error('Bootstrap Modal belum tersedia.');
         return false;
     }
+
     try{
         if(bootstrap.Modal.getOrCreateInstance){
-            window.modal = bootstrap.Modal.getOrCreateInstance(modalElement,{backdrop:'static',keyboard:false});
+            window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
+                backdrop:'static',
+                keyboard:false
+            });
         }else{
-            window.modal = bootstrap.Modal.getInstance(modalElement);
+            window.modal=bootstrap.Modal.getInstance(modalElement);
             if(!window.modal){
-                window.modal = new bootstrap.Modal(modalElement,{backdrop:'static',keyboard:false});
+                window.modal=new bootstrap.Modal(modalElement,{
+                    backdrop:'static',
+                    keyboard:false
+                });
             }
         }
+
+        // PAKSA PULIHKAN TOMBOL SAAT MODAL DITUTUP
+        if(!modalElement.dataset.pegawaiCloseHandler){
+            modalElement.addEventListener('hide.bs.modal',function(){
+                window.pdfPegawaiToken++;
+                window.restoreTombolPegawai();
+            });
+
+            modalElement.addEventListener('hidden.bs.modal',function(){
+                window.restoreTombolPegawai();
+            });
+
+            modalElement.dataset.pegawaiCloseHandler='1';
+        }
+
         return true;
     }catch(error){
         console.error('Gagal menginisialisasi modal:',error);
         return false;
     }
 };
-// PAKSA PULIHKAN TOMBOL SAAT MODAL DITUTUP
-if(!modalElement.dataset.pegawaiCloseHandler){
-    modalElement.addEventListener('hide.bs.modal',function(){
-        window.pdfPegawaiToken++;
-        window.restoreTombolPegawai();
-    });
 
-    modalElement.addEventListener('hidden.bs.modal',function(){
-        window.restoreTombolPegawai();
-    });
-
-    modalElement.dataset.pegawaiCloseHandler = '1';
-}
 /* =========================================================
    SIMPAN KONDISI TOMBOL
 ========================================================= */
@@ -428,3 +440,20 @@ async function cetakPdfDataPegawai(btn){
         }
     }
 }
+
+/* =========================================================
+   DOCUMENT READY DAN WINDOW LOAD
+========================================================= */
+function jalankanInisialisasiPegawai(){
+    if(typeof window.initHalamanPegawai==='function'){
+        window.initHalamanPegawai();
+    }
+}
+
+if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',jalankanInisialisasiPegawai,{once:true});
+}else{
+    jalankanInisialisasiPegawai();
+}
+
+window.addEventListener('load',jalankanInisialisasiPegawai);
