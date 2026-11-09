@@ -426,19 +426,3 @@ async function cetakPdfDataPegawai(btn){
         }
     }
 }
-
-/* =========================================================
-   INISIALISASI HALAMAN PEGAWAI
-========================================================= */
-$(document)
-    .off('click.pegawaiSpinner', '.btn-proses-pegawai')
-    .on('click.pegawaiSpinner', '.btn-proses-pegawai', function(){
-        window.tombolProsesPegawaiAktif = this;
-        window.htmlTombolProsesPegawai = $(this).html();
-    });
-
-$(document)
-    .off('hide.bs.modal.pegawaiSpinner', '.modal')
-    .on('hide.bs.modal.pegawaiSpinner', '.modal', function(){
-        window.restoreTombolPegawai();
-    });
