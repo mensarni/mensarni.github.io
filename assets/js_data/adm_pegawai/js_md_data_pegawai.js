@@ -35,7 +35,19 @@ window.initHalamanPegawai = function(){
         return false;
     }
 };
+// PAKSA PULIHKAN TOMBOL SAAT MODAL DITUTUP
+if(!modalElement.dataset.pegawaiCloseHandler){
+    modalElement.addEventListener('hide.bs.modal',function(){
+        window.pdfPegawaiToken++;
+        window.restoreTombolPegawai();
+    });
 
+    modalElement.addEventListener('hidden.bs.modal',function(){
+        window.restoreTombolPegawai();
+    });
+
+    modalElement.dataset.pegawaiCloseHandler = '1';
+}
 /* =========================================================
    SIMPAN KONDISI TOMBOL
 ========================================================= */
@@ -54,15 +66,15 @@ window.simpanStatusTombolPegawai = function(btn){
    PEMULIHAN TOMBOL PROSES / CETAK
 ========================================================= */
 window.restoreTombolPegawai = function(){
-    if(window.tombolProsesPegawaiAktif){
-        const btn = window.tombolProsesPegawaiAktif;
-        $(btn)
-            .prop('disabled', false)
-            .removeClass('disabled')
-            .removeAttr('aria-disabled');
+    const btn = window.tombolProsesPegawaiAktif;
+    if(btn){
+        btn.disabled = false;
+        btn.removeAttribute('disabled');
+        btn.classList.remove('disabled');
+        btn.removeAttribute('aria-disabled');
 
         if(window.htmlTombolProsesPegawai !== ''){
-            $(btn).html(window.htmlTombolProsesPegawai);
+            btn.innerHTML = window.htmlTombolProsesPegawai;
         }
     }
     window.tombolProsesPegawaiAktif = null;
@@ -89,15 +101,6 @@ if(!window.jQuery){
         window.simpanStatusTombolPegawai(btn);
         bukaProsesDataPegawai(id,userData,btn);
         return false;
-    });
-
-    /* PEMULIHAN TOMBOL KETIKA MODAL DITUTUP */
-    $(document).off('hide.bs.modal.pegawai','.modal').on('hide.bs.modal.pegawai','.modal',function(){
-        window.pdfPegawaiToken++;
-        window.restoreTombolPegawai();
-    });
-    $(document).off('hidden.bs.modal.pegawai','.modal').on('hidden.bs.modal.pegawai','.modal',function(){
-        window.restoreTombolPegawai();
     });
 
     /* SIMPAN DATA PEGAWAI */
