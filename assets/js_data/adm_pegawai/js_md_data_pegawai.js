@@ -104,44 +104,40 @@ if(!window.jQuery){
             return false;
         });
 
-    /* CETAK PEGAWAI */
-    $(document)
-        .off('click.pegawai','.btn-cetak-pegawai')
-        .on('click.pegawai','.btn-cetak-pegawai',function(e){
-
-            e.preventDefault();
-            e.stopPropagation();
-
-            const btn = this;
-            const id = $(btn).attr('data-id');
-            const userData = $(btn).attr('data-user');
-
-            if(!id){
-                window.parent.postMessage({
-                    type:"flash_message",
-                    message:"<b>GAGAL!</b><br>ID pegawai tidak ditemukan.",
-                    status:"danger"
-                },"*");
-
-                return false;
-            }
-
-            window.tombolProsesPegawaiAktif = btn;
-            window.htmlTombolProsesPegawai = btn.innerHTML;
-
-            bukaCetakDataPegawai(id,userData,btn);
-
-            return false;
-        });
-
-    /* KEMBALIKAN TOMBOL KETIKA MODAL DITUTUP */
-    $(document)
-        .off('hidden.bs.modal.pegawai','.modal')
-        .on('hidden.bs.modal.pegawai','.modal',function(){
-
-            window.restoreTombolPegawai();
-
-        });
+      /* =========================================================
+         PEMULIHAN TOMBOL PROSES / CETAK
+      ========================================================= */
+      window.restoreTombolPegawai = function(){
+          const btn = window.tombolProsesPegawaiAktif;
+      
+          if(!btn){
+              window.htmlTombolProsesPegawai = '';
+              return;
+          }
+      
+          btn.disabled = false;
+      
+          $(btn)
+              .prop('disabled',false)
+              .removeClass('disabled')
+              .removeAttr('aria-disabled');
+      
+          if(window.htmlTombolProsesPegawai !== ''){
+              btn.innerHTML = window.htmlTombolProsesPegawai;
+          }
+      
+          window.tombolProsesPegawaiAktif = null;
+          window.htmlTombolProsesPegawai = '';
+      };
+      
+      /* =========================================================
+         KEMBALIKAN TOMBOL KETIKA MODAL DITUTUP
+      ========================================================= */
+      $(document)
+          .off('hide.bs.modal.pegawai hidden.bs.modal.pegawai','.modal')
+          .on('hide.bs.modal.pegawai hidden.bs.modal.pegawai','.modal',function(){
+              window.restoreTombolPegawai();
+          });
 
     /* SIMPAN DATA PEGAWAI */
     $(document)
