@@ -13,9 +13,6 @@ window.pdfPegawaiToken = window.pdfPegawaiToken || 0;
 /* =========================================================
    INISIALISASI MODAL SETELAH CT DIMUAT
 ========================================================= */
-/* =========================================================
-   INISIALISASI MODAL SETELAH CT DIMUAT
-========================================================= */
 window.initHalamanPegawai=function(){
     const modalElement=document.getElementById('modal');
     if(!modalElement)return false;
@@ -41,7 +38,6 @@ window.initHalamanPegawai=function(){
             }
         }
 
-        // PAKSA PULIHKAN TOMBOL SAAT MODAL DITUTUP
         if(!modalElement.dataset.pegawaiCloseHandler){
             modalElement.addEventListener('hide.bs.modal',function(){
                 window.pdfPegawaiToken++;
@@ -61,6 +57,7 @@ window.initHalamanPegawai=function(){
         return false;
     }
 };
+
 /* =========================================================
    SIMPAN KONDISI TOMBOL
 ========================================================= */
@@ -107,10 +104,12 @@ if(!window.jQuery){
         const btn = this;
         const id = $(btn).attr('data-id');
         const userData = $(btn).attr('data-user');
+
         if(!id){
             window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>ID pegawai tidak ditemukan.",status:"danger"},"*");
             return false;
         }
+
         window.simpanStatusTombolPegawai(btn);
         bukaProsesDataPegawai(id,userData,btn);
         return false;
@@ -146,11 +145,13 @@ if(!window.jQuery){
     $(document).off('input.pegawai change.pegawai','#data_pegawai_anak_1,#data_pegawai_anak_2,#data_pegawai_anak_3,#data_pegawai_anak_4').on('input.pegawai change.pegawai','#data_pegawai_anak_1,#data_pegawai_anak_2,#data_pegawai_anak_3,#data_pegawai_anak_4',function(){
         var nomor = $(this).attr('id').replace('data_pegawai_anak_','');
         var nilai = $(this).val();
+
         if(nilai===undefined || nilai===null || $.trim(String(nilai))==='' || $.trim(String(nilai))==='0'){
             $('#row_anak_'+nomor).css('display','none');
         }else{
             $('#row_anak_'+nomor).css('display','flex');
         }
+
         cekTombolTambahAnak();
     });
 }
@@ -173,20 +174,37 @@ function parseDataPegawai(userData){
 ========================================================= */
 function bukaProsesDataPegawai(id,userData,btn){
     const user = parseDataPegawai(userData);
+
     if(!user || !user.user_id){
         window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>Data pegawai tidak ditemukan.",status:"danger"},"*");
         window.restoreTombolPegawai();
         return false;
     }
+
     if(btn) disableSubmit(btn);
+
     closeAllModal(function(){
         window.pegawaiDataId = id;
+
         const form = document.getElementById('formDataPegawai');
         if(form) form.reset();
+
         $('#pegawai_id').val('');
         $('#pegawai_user_id').val(id);
+
         WarnaPrimary();
         isiDataPegawai(user);
+
+        Btn_Proses(user);
+        cekDataKeluarga();
+
+        /* BUKA MODAL TANPA MENUNGGU WILAYAH */
+        tampilkanmodal();
+
+        /* PULIHKAN TOMBOL SETELAH MODAL DIBUKA */
+        window.restoreTombolPegawai();
+
+        /* MUAT WILAYAH DI BELAKANG */
         loadWilayah({
             provinsi:user.provinsi || '',
             kota_kabupaten:user.kota_kabupaten || '',
@@ -194,16 +212,11 @@ function bukaProsesDataPegawai(id,userData,btn){
             kelurahan:user.kelurahan || ''
         },function(berhasil){
             if(!berhasil){
-                window.restoreTombolPegawai();
                 window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>Data wilayah gagal dimuat.",status:"danger"},"*");
-                return;
             }
-            Btn_Proses(user);
-            cekDataKeluarga();
-            tampilkanmodal();
-            window.restoreTombolPegawai();
         });
     });
+
     return true;
 }
 
@@ -226,20 +239,36 @@ function Btn_Proses(user){
 ========================================================= */
 function bukaCetakDataPegawai(id,userData,btn){
     const user = parseDataPegawai(userData);
+
     if(!user || !user.user_id){
         window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>Data pegawai tidak ditemukan.",status:"danger"},"*");
         window.restoreTombolPegawai();
         return false;
     }
+
     if(btn) disableSubmit(btn);
+
     closeAllModal(function(){
         window.pegawaiDataId = id;
+
         const form = document.getElementById('formDataPegawai');
         if(form) form.reset();
+
         $('#pegawai_id').val('');
         $('#pegawai_user_id').val(id);
+
         WarnaSuccess();
         isiDataPegawai(user);
+
+        Btn_Cetak(user);
+
+        /* BUKA MODAL TANPA MENUNGGU WILAYAH */
+        tampilkanmodal();
+
+        /* PULIHKAN TOMBOL SETELAH MODAL DIBUKA */
+        window.restoreTombolPegawai();
+
+        /* MUAT WILAYAH DI BELAKANG */
         loadWilayah({
             provinsi:user.provinsi || '',
             kota_kabupaten:user.kota_kabupaten || '',
@@ -247,15 +276,11 @@ function bukaCetakDataPegawai(id,userData,btn){
             kelurahan:user.kelurahan || ''
         },function(berhasil){
             if(!berhasil){
-                window.restoreTombolPegawai();
                 window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>Data wilayah gagal dimuat.",status:"danger"},"*");
-                return;
             }
-            Btn_Cetak(user);
-            tampilkanmodal();
-            window.restoreTombolPegawai();
         });
     });
+
     return true;
 }
 
@@ -278,26 +303,34 @@ function Btn_Cetak(user){
 ========================================================= */
 function simpanDataPegawai(btn){
     const form = document.getElementById('formDataPegawai');
+
     if(!form){
         window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>Formulir Tidak Ditemukan!",status:"danger"},"*");
         return false;
     }
+
     const userId = $(form).find('[name="user_id"]').val();
+
     if(!userId){
         window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>Pegawai tidak ditemukan!",status:"danger"},"*");
         return false;
     }
+
     $(form).find('.rupiah').each(function(){
         this.value = this.value.replace(/[^\d]/g,'');
     });
+
     if(!form.checkValidity()){
         form.reportValidity();
         return false;
     }
+
     form.method = 'POST';
     form.action = '';
     form.target = 'ProsesFrame';
+
     if(btn) disableSubmit(btn);
+
     return true;
 }
 
@@ -306,20 +339,25 @@ function simpanDataPegawai(btn){
 ========================================================= */
 function cekDataKeluarga(){
     var daftarAnak = [1,2,3,4];
+
     $.each(daftarAnak,function(index,nomor){
         var nilai = $('#data_pegawai_anak_'+nomor).val();
+
         if(nilai===undefined || nilai===null || $.trim(String(nilai))==='' || $.trim(String(nilai))==='0'){
             $('#row_anak_'+nomor).css('display','none');
         }else{
             $('#row_anak_'+nomor).css('display','flex');
         }
     });
+
     var istri = $('#data_pegawai_istri').val();
+
     if(istri===undefined || istri===null || $.trim(String(istri))==='' || $.trim(String(istri))==='0'){
         $('#row_istri').css('display','none');
     }else{
         $('#row_istri').css('display','flex');
     }
+
     cekTombolTambahAnak();
 }
 
@@ -328,13 +366,16 @@ function cekDataKeluarga(){
 ========================================================= */
 function cekTombolTambahAnak(){
     var adaKosong = false;
+
     for(var i=1;i<=4;i++){
         var nilai = $('#data_pegawai_anak_'+i).val();
+
         if(nilai===undefined || nilai===null || $.trim(String(nilai))==='' || $.trim(String(nilai))==='0'){
             adaKosong = true;
             break;
         }
     }
+
     if(adaKosong){
         $('#btn_tambah_anak').show();
     }else{
@@ -347,40 +388,54 @@ function cekTombolTambahAnak(){
 ========================================================= */
 async function cetakPdfDataPegawai(btn){
     const modalElement = document.querySelector('.modal.show');
+
     if(!modalElement){
         alert('Modal tidak ditemukan.');
         return false;
     }
+
     const content = modalElement.querySelector('.modal-body');
+
     if(!content){
         alert('Isi modal tidak ditemukan.');
         return false;
     }
+
     if(typeof window.html2canvas!=='function'){
         alert('Library html2canvas belum tersedia.');
         console.error('html2canvas tidak ditemukan.');
         return false;
     }
+
     const jsPDFClass = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : (window.jsPDF || null);
+
     if(!jsPDFClass){
         alert('Library jsPDF belum tersedia.');
         console.error('jsPDF tidak ditemukan.');
         return false;
     }
+
     if(!btn) return false;
+
     const token = ++window.pdfPegawaiToken;
+
     window.simpanStatusTombolPegawai(btn);
+
     $(btn).prop('disabled',true).addClass('disabled').attr('aria-disabled','true').html('<span class="spinner-border spinner-border-sm me-1"></span>Membuat PDF...');
+
     const styleAwal = {
         overflow:content.style.overflow,
         maxHeight:content.style.maxHeight,
         height:content.style.height
     };
+
     try{
         content.style.overflow = 'visible';
         content.style.maxHeight = 'none';
         content.style.height = 'auto';
+
         await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+
         const canvas = await window.html2canvas(content,{
             scale:2,
             useCORS:true,
@@ -394,16 +449,21 @@ async function cetakPdfDataPegawai(btn){
             windowWidth:Math.max(document.documentElement.clientWidth,content.scrollWidth),
             windowHeight:Math.max(document.documentElement.clientHeight,content.scrollHeight)
         });
+
         if(token!==window.pdfPegawaiToken || !modalElement.classList.contains('show')){
             return false;
         }
+
         if(!canvas || !canvas.width || !canvas.height){
             throw new Error('Canvas kosong atau gagal dirender.');
         }
+
         const imgData = canvas.toDataURL('image/jpeg',0.92);
+
         if(!imgData || imgData.length<100){
             throw new Error('Gagal mengubah hasil canvas menjadi gambar.');
         }
+
         const pdf = new jsPDFClass('p','mm','a4');
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
@@ -411,30 +471,41 @@ async function cetakPdfDataPegawai(btn){
         const pdfWidth = pageWidth-(margin*2);
         const areaHeight = pageHeight-(margin*2);
         const pdfHeight = canvas.height*pdfWidth/canvas.width;
+
         if(!isFinite(pdfHeight) || pdfHeight<=0){
             throw new Error('Ukuran gambar PDF tidak valid.');
         }
+
         const jumlahHalaman = Math.ceil(pdfHeight/areaHeight);
+
         for(let halaman=0;halaman<jumlahHalaman;halaman++){
             if(token!==window.pdfPegawaiToken || !modalElement.classList.contains('show')){
                 return false;
             }
+
             if(halaman>0) pdf.addPage();
+
             const posisiY = margin-(halaman*areaHeight);
             pdf.addImage(imgData,'JPEG',margin,posisiY,pdfWidth,pdfHeight,undefined,'FAST');
         }
+
         pdf.save('Data_Profil_Pegawai.pdf');
         return true;
+
     }catch(error){
         console.error('Gagal membuat PDF:',error);
+
         if(token===window.pdfPegawaiToken){
             alert('Gagal membuat PDF: '+(error.message || error));
         }
+
         return false;
+
     }finally{
         content.style.overflow = styleAwal.overflow;
         content.style.maxHeight = styleAwal.maxHeight;
         content.style.height = styleAwal.height;
+
         if(window.tombolProsesPegawaiAktif===btn){
             window.restoreTombolPegawai();
         }else{
@@ -442,6 +513,7 @@ async function cetakPdfDataPegawai(btn){
         }
     }
 }
+
 /* =========================================================
    DOCUMENT READY DAN WINDOW LOAD
 ========================================================= */
@@ -457,4 +529,6 @@ if(document.readyState==='loading'){
     jalankanInisialisasiPegawai();
 }
 
-window.addEventListener('load',jalankanInisialisasiPegawai);
+if(document.readyState!=='complete'){
+    window.addEventListener('load',jalankanInisialisasiPegawai,{once:true});
+}
