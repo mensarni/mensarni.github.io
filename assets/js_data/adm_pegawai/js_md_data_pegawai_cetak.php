@@ -1,5 +1,13 @@
 $(document).ready(function(){
     $('#btnCetakPegawai').on('click',async function(){
+        if(typeof window.html2canvas!=='function'){
+            alert('Library html2canvas belum tersedia.');
+            return;
+        }
+        if(!window.jspdf || typeof window.jspdf.jsPDF!=='function'){
+            alert('Library jsPDF belum tersedia.');
+            return;
+        }
         const modal=document.querySelector('.modal.show');
         if(!modal){
             alert('Modal tidak ditemukan.');
@@ -14,7 +22,7 @@ $(document).ready(function(){
         btn.prop('disabled',true);
         btn.html('<span class="spinner-border spinner-border-sm me-1"></span>Membuat PDF...');
         try{
-            const canvas=await html2canvas(content,{
+            const canvas=await window.html2canvas(content,{
                 scale:2,
                 useCORS:true,
                 backgroundColor:'#ffffff'
