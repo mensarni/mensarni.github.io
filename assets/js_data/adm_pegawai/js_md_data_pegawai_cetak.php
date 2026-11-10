@@ -25,26 +25,24 @@ $(document).ready(function(){
             const canvas=await window.html2canvas(content,{
                 scale:2,
                 useCORS:true,
-                backgroundColor:'#ffffff'
+                backgroundColor:'#ffffff',
+                windowWidth:content.scrollWidth,
+                windowHeight:content.scrollHeight
             });
             const {jsPDF}=window.jspdf;
             const pdf=new jsPDF('p','mm','a4');
             const pageWidth=pdf.internal.pageSize.getWidth();
             const pageHeight=pdf.internal.pageSize.getHeight();
             const margin=5;
-            const pdfWidth=pageWidth-(margin*2);
-            const pdfHeight=canvas.height*pdfWidth/canvas.width-50;
+            const maxWidth=pageWidth-(margin*2);
+            const maxHeight=pageHeight-(margin*2);
+            const ratio=Math.min(maxWidth/canvas.width,maxHeight/canvas.height);
+            const imgWidth=canvas.width*ratio;
+            const imgHeight=canvas.height*ratio;
+            const x=(pageWidth-imgWidth)/2;
+            const y=(pageHeight-imgHeight)/2;
             const imgData=canvas.toDataURL('image/jpeg',0.95);
-            let heightLeft=pdfHeight;
-            let position=margin;
-            pdf.addImage(imgData,'JPEG',margin,position,pdfWidth,pdfHeight);
-            heightLeft-=pageHeight-(margin*2);
-            while(heightLeft>0){
-                position=heightLeft-pdfHeight+margin;
-                pdf.addPage();
-                pdf.addImage(imgData,'JPEG',margin,position,pdfWidth,pdfHeight);
-                heightLeft-=pageHeight-(margin*2);
-            }
+            pdf.addImage(imgData,'JPEG',x,y,imgWidth,imgHeight);
             pdf.save('Data_Mutasi_Pegawai.pdf');
         }catch(error){
             console.error(error);
