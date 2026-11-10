@@ -1,51 +1,49 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-$('#btnCetakPegawai').on('click',async function(){
-	const modal=document.querySelector('.modal.show');
-	if(!modal){
-		alert('Modal tidak ditemukan.');
-		return;
-	}
-	const content=modal.querySelector('.modal-body');
-	if(!content){
-		alert('Isi modal tidak ditemukan.');
-		return;
-	}
-	const btn=$(this);
-	btn.prop('disabled',true);
-	btn.html('<span class="spinner-border spinner-border-sm me-1"></span>Membuat PDF...');
-	try{
-		const canvas=await html2canvas(content,{
-			scale:2,
-			useCORS:true,
-			backgroundColor:'#ffffff'
-		});
-		const {jsPDF}=window.jspdf;
-		const pdf=new jsPDF('p','mm','a4');
-		const pageWidth=pdf.internal.pageSize.getWidth();
-		const pageHeight=pdf.internal.pageSize.getHeight();
-		const margin=5;
-		const pdfWidth=pageWidth-(margin*2);
-		const pdfHeight=canvas.height*pdfWidth/canvas.width-50;
-		const imgData=canvas.toDataURL('image/jpeg',0.95);
-		let heightLeft=pdfHeight;
-		let position=margin;
-		pdf.addImage(imgData,'JPEG',margin,position,pdfWidth,pdfHeight);
-		heightLeft-=pageHeight-(margin*2);
-		while(heightLeft>0){
-			position=heightLeft-pdfHeight+margin;
-			pdf.addPage();
-			pdf.addImage(imgData,'JPEG',margin,position,pdfWidth,pdfHeight);
-			heightLeft-=pageHeight-(margin*2);
-		}
-		pdf.save('Data_Mutasi_Pegawai.pdf');
-	}catch(error){
-		console.error(error);
-		alert('Gagal membuat PDF.');
-	}finally{
-		btn.prop('disabled',false);
-		btn.html('<i class="fa-light fa-print me-1"></i>Cetak');
-	}
+$(document).ready(function(){
+    $('#btnCetakPegawai').on('click',async function(){
+        const modal=document.querySelector('.modal.show');
+        if(!modal){
+            alert('Modal tidak ditemukan.');
+            return;
+        }
+        const content=modal.querySelector('.modal-body');
+        if(!content){
+            alert('Isi modal tidak ditemukan.');
+            return;
+        }
+        const btn=$(this);
+        btn.prop('disabled',true);
+        btn.html('<span class="spinner-border spinner-border-sm me-1"></span>Membuat PDF...');
+        try{
+            const canvas=await html2canvas(content,{
+                scale:2,
+                useCORS:true,
+                backgroundColor:'#ffffff'
+            });
+            const {jsPDF}=window.jspdf;
+            const pdf=new jsPDF('p','mm','a4');
+            const pageWidth=pdf.internal.pageSize.getWidth();
+            const pageHeight=pdf.internal.pageSize.getHeight();
+            const margin=5;
+            const pdfWidth=pageWidth-(margin*2);
+            const pdfHeight=canvas.height*pdfWidth/canvas.width-50;
+            const imgData=canvas.toDataURL('image/jpeg',0.95);
+            let heightLeft=pdfHeight;
+            let position=margin;
+            pdf.addImage(imgData,'JPEG',margin,position,pdfWidth,pdfHeight);
+            heightLeft-=pageHeight-(margin*2);
+            while(heightLeft>0){
+                position=heightLeft-pdfHeight+margin;
+                pdf.addPage();
+                pdf.addImage(imgData,'JPEG',margin,position,pdfWidth,pdfHeight);
+                heightLeft-=pageHeight-(margin*2);
+            }
+            pdf.save('Data_Mutasi_Pegawai.pdf');
+        }catch(error){
+            console.error(error);
+            alert('Gagal membuat PDF.');
+        }finally{
+            btn.prop('disabled',false);
+            btn.html('<i class="fa-light fa-print me-1"></i>Cetak');
+        }
+    });
 });
-</script>
