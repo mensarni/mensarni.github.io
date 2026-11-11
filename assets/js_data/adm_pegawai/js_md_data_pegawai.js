@@ -18,23 +18,12 @@ window.htmlTombolProsesPegawai='';
 ========================================================= */
 window.init_fungsi_pegawai=function(){
     const modalElement=document.getElementById('modal');
-    if(!modalElement){
-        console.error('Modal Data Pegawai tidak ditemukan.');
-        return false;
-    }
-    if(!window.bootstrap||!bootstrap.Modal){
-        console.error('Bootstrap Modal belum tersedia.');
-        return false;
-    }
-    try{
+    window.modal=null;
+    if(modalElement){
         window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
             backdrop:'static',
             keyboard:false
         });
-        return true;
-    }catch(error){
-        console.error('Gagal inisialisasi modal pegawai:',error);
-        return false;
     }
 };
 
