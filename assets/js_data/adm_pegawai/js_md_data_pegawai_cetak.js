@@ -1,4 +1,4 @@
-window.initMdDataPegawaiCetak = function(){
+window.initMdDataPegawaiCetak=function(){
     if(window.mdDataPegawaiCetakEvent)return;
     window.mdDataPegawaiCetakEvent=true;
 
@@ -8,7 +8,7 @@ window.initMdDataPegawaiCetak = function(){
 
         const btn=this;
         const htmlAwal=btn.innerHTML;
-        const modal=document.querySelector('#modal.show');
+        const modal=btn.closest('.modal');
         const dialog=modal?modal.querySelector('.modal-dialog'):null;
         const modalContent=modal?modal.querySelector('.modal-content'):null;
         const content=modal?modal.querySelector('.modal-body'):null;
@@ -18,20 +18,26 @@ window.initMdDataPegawaiCetak = function(){
             return;
         }
 
-        const cssAwal={
-            dialogWidth:dialog.style.width,
-            dialogMaxWidth:dialog.style.maxWidth,
-            dialogHeight:dialog.style.height,
-            dialogMaxHeight:dialog.style.maxHeight,
-            dialogMargin:dialog.style.margin,
-            contentWidth:modalContent.style.width,
-            contentHeight:modalContent.style.height,
-            contentMinHeight:modalContent.style.minHeight,
-            contentMaxHeight:modalContent.style.maxHeight,
-            bodyHeight:content.style.height,
-            bodyMaxHeight:content.style.maxHeight,
-            bodyOverflow:content.style.overflow
-        };
+        if(typeof window.html2canvas!=='function'){
+            message('<b>GAGAL!</b><br>Library html2canvas belum tersedia.','danger');
+            return;
+        }
+
+        if(!window.jspdf||typeof window.jspdf.jsPDF!=='function'){
+            message('<b>GAGAL!</b><br>Library jsPDF belum tersedia.','danger');
+            return;
+        }
+
+        const elemen=[dialog,modalContent,content];
+        const cssAwal=elemen.map(el=>({
+            width:el.style.width,
+            maxWidth:el.style.maxWidth,
+            height:el.style.height,
+            minHeight:el.style.minHeight,
+            maxHeight:el.style.maxHeight,
+            margin:el.style.margin,
+            overflow:el.style.overflow
+        }));
 
         btn.disabled=true;
         btn.innerHTML='<span class="spinner-border spinner-border-sm me-1"></span>Membuat PDF...';
@@ -59,7 +65,7 @@ window.initMdDataPegawaiCetak = function(){
                 useCORS:true,
                 allowTaint:false,
                 backgroundColor:'#ffffff',
-                logging:false,
+                logging:true,
                 scrollX:0,
                 scrollY:0,
                 windowWidth:Math.max(content.scrollWidth,content.clientWidth),
@@ -70,28 +76,28 @@ window.initMdDataPegawaiCetak = function(){
                 throw new Error('Gagal mengambil gambar isi modal.');
             }
 
-            const {jsPDF}=window.jspdf;
-            const pdf=new jsPDF('l','mm','a4');
+            const jsPDF=window.jspdf.jsPDF;
+            const pdf=new jsPDF({
+                orientation:'landscape',
+                unit:'mm',
+                format:'a4'
+            });
+
             const pageWidth=pdf.internal.pageSize.getWidth();
             const pageHeight=pdf.internal.pageSize.getHeight();
             const margin=5;
-            const maxWidth=pageWidth-(margin*2);
-            const maxHeight=pageHeight-(margin*2);
-
             const ratio=Math.min(
-                maxWidth/canvas.width,
-                maxHeight/canvas.height
+                (pageWidth-margin*2)/canvas.width,
+                (pageHeight-margin*2)/canvas.height
             );
 
             const imgWidth=canvas.width*ratio;
             const imgHeight=canvas.height*ratio;
             const x=(pageWidth-imgWidth)/2;
             const y=(pageHeight-imgHeight)/2;
-            const imgData=canvas.toDataURL('image/jpeg',0.95);
 
-            pdf.addImage(imgData,'JPEG',x,y,imgWidth,imgHeight);
-
-            const eleNama=document.getElementById('modalNamaPegawai');
+            pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',x,y,imgWidth,imgHeight);
+            const eleNama=modal.querySelector('#modalNamaPegawai');
             const namaPegawai=(eleNama?eleNama.textContent.trim():'Pegawai')
                 .replace(/[\\/:*?"<>|]/g,'_')
                 .replace(/\s+/g,'_');
@@ -102,20 +108,15 @@ window.initMdDataPegawaiCetak = function(){
             console.error('Gagal cetak PDF:',error);
             message('<b>GAGAL!</b><br>'+String(error.message||error),'danger');
         }finally{
-            dialog.style.width=cssAwal.dialogWidth;
-            dialog.style.maxWidth=cssAwal.dialogMaxWidth;
-            dialog.style.height=cssAwal.dialogHeight;
-            dialog.style.maxHeight=cssAwal.dialogMaxHeight;
-            dialog.style.margin=cssAwal.dialogMargin;
-
-            modalContent.style.width=cssAwal.contentWidth;
-            modalContent.style.height=cssAwal.contentHeight;
-            modalContent.style.minHeight=cssAwal.contentMinHeight;
-            modalContent.style.maxHeight=cssAwal.contentMaxHeight;
-
-            content.style.height=cssAwal.bodyHeight;
-            content.style.maxHeight=cssAwal.bodyMaxHeight;
-            content.style.overflow=cssAwal.bodyOverflow;
+            [dialog,modalContent,content].forEach((el,i)=>{
+                el.style.width=cssAwal[i].width;
+                el.style.maxWidth=cssAwal[i].maxWidth;
+                el.style.height=cssAwal[i].height;
+                el.style.minHeight=cssAwal[i].minHeight;
+                el.style.maxHeight=cssAwal[i].maxHeight;
+                el.style.margin=cssAwal[i].margin;
+                el.style.overflow=cssAwal[i].overflow;
+            });
 
             btn.disabled=false;
             btn.innerHTML=htmlAwal;
