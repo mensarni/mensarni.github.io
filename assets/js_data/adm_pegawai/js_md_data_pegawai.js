@@ -73,34 +73,38 @@ window.restoreTombolPegawai=function(){
    TUTUP MODAL LAIN SEBELUM MEMBUKA MODAL PEGAWAI
 ========================================================= */
 function tutupModalSebelumBuka(callback){
-    const modalTerbuka=document.querySelectorAll('.modal.show');
-    if(!modalTerbuka.length){
-        callback();
+    const modalElement=document.getElementById('modal');
+    if(!modalElement){
+        console.error('Modal Data Pegawai tidak ditemukan.');
         return;
     }
-    if(typeof closeAllModal==='function'){
-        closeAllModal(callback);
-        return;
-    }
-    let jumlahModal=modalTerbuka.length;
-    modalTerbuka.forEach(function(element){
-        const instance=bootstrap.Modal.getOrCreateInstance(element);
-        element.addEventListener('hidden.bs.modal',function(){
-            jumlahModal--;
-            if(jumlahModal===0)callback();
-        },{once:true});
-        instance.hide();
+    const modalLain=document.querySelectorAll('.modal.show');
+    modalLain.forEach(function(element){
+        if(element!==modalElement){
+            console.warn('Modal halaman lain sedang terbuka:',element.id);
+        }
     });
+    callback();
 }
 
 /* =========================================================
    BUKA MODAL DATA PEGAWAI
 ========================================================= */
 function bukaModalPegawai(){
-    if(!window.init_fungsi_pegawai())return false;
-    if(!window.modal)return false;
-    window.modal.show();
-    return true;
+    const modalElement=document.getElementById('modal');
+    if(!modalElement)return false;
+    if(!window.bootstrap||!bootstrap.Modal)return false;
+    try{
+        window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
+            backdrop:'static',
+            keyboard:false
+        });
+        window.modal.show();
+        return true;
+    }catch(error){
+        console.error('Gagal membuka Modal Data Pegawai:',error);
+        return false;
+    }
 }
 
 /* =========================================================
