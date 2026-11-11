@@ -1,4 +1,6 @@
 // MSN - Data Pegawai CDN
+(function(){
+if(window.dataProfilPegawaiCdnLoaded)return;
 window.dataProfilPegawaiCdnLoaded=true;
 window.dataPegawaiData=window.dataPegawaiData||[];
 
@@ -519,8 +521,10 @@ function hitungTotalGajiPegawai(){
     $('#data_pegawai_gaji_total').val(formatRupiah(total));
 }
 
-$(document).on(
-    'input change',
+$(document)
+.off('input.dataPegawaiCdn change.dataPegawaiCdn', '#data_pegawai_gaji_pokok, #data_pegawai_gaji_jabatan, #data_pegawai_gaji_transport, #data_pegawai_gaji_fungsional, #data_pegawai_gaji_insentif, #data_pegawai_gaji_makan, #data_pegawai_gaji_kompensasi')
+.on(
+    'input.dataPegawaiCdn change.dataPegawaiCdn',
     '#data_pegawai_gaji_pokok, #data_pegawai_gaji_jabatan, #data_pegawai_gaji_transport, #data_pegawai_gaji_fungsional, #data_pegawai_gaji_insentif, #data_pegawai_gaji_makan, #data_pegawai_gaji_kompensasi',
     function(){
         const value=$(this).val();
@@ -738,3 +742,34 @@ window.initDataPegawaiCdn=function(){
     if(typeof window.initPopoverDetailPegawai==='function')window.initPopoverDetailPegawai();
     if(typeof window.initFilterPegawai==='function')window.initFilterPegawai();
 };
+
+// EKSPOR FUNGSI AGAR TETAP DAPAT DIAKSES MODUL MSN LAIN
+window.isiProfilPegawai=isiProfilPegawai;
+window.properText=properText;
+window.formatTanggalPegawai=formatTanggalPegawai;
+window.isiDataUsers=isiDataUsers;
+window.isiDataProfilPegawai=isiDataProfilPegawai;
+window.isiCetakProfilPegawai=isiCetakProfilPegawai;
+window.isiDataKepegawaian=isiDataKepegawaian;
+window.isiDataStatusPegawai=isiDataStatusPegawai;
+window.isiDataDisiplinPegawai=isiDataDisiplinPegawai;
+window.isiDataGajiPegawai=isiDataGajiPegawai;
+window.isiDataGajiPelatihan=isiDataGajiPelatihan;
+window.isiDataSurat=isiDataSurat;
+window.isiDataOutUsers=isiDataOutUsers;
+window.escapeHtmlDataPegawai=escapeHtmlDataPegawai;
+window.isiDataPegawai=isiDataPegawai;
+window.initPopoverPegawai=initPopoverPegawai;
+window.tampilkanmodal=tampilkanmodal;
+window.cariDataPegawai=cariDataPegawai;
+window.WarnaSuccess=WarnaSuccess;
+window.WarnaPrimary=WarnaPrimary;
+window.WarnaDanger=WarnaDanger;
+window.WarnaInfo=WarnaInfo;
+window.WarnaOrangered=WarnaOrangered;
+window.WarnaPurple=WarnaPurple;
+window.WarnaWarning=WarnaWarning;
+window.angkaRupiah=angkaRupiah;
+window.formatRupiah=formatRupiah;
+window.hitungTotalGajiPegawai=hitungTotalGajiPegawai;
+})();
