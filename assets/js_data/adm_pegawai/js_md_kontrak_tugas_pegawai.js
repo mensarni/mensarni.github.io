@@ -1,97 +1,125 @@
 (function(){
 if(window.kontrakPegawaiJsLoaded)return;
 window.kontrakPegawaiJsLoaded=true;
-window.initKontrakPegawai=function(){
-	const modalElement=document.getElementById('modal');
-	if(modalElement){
-		window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{backdrop:'static',keyboard:false});
-	}
-	hitungDurasiKerja();
-	updateTanggalPegawai();
-	hitungTotalGajiPegawai();
-};
 window.dataKontrakPegawai=window.dataKontrakPegawai||[];
 window.modal=null;
 window.pegawaiKontrakId=null;
 window.pegawaiSuratId=null;
-$(document).on('click','.btn-kontrak-pegawai',function(e){
-	e.preventDefault();
-	e.stopPropagation();
-	const btn=this;
-	const id=$(btn).attr('data-id')||$(btn).attr('data-user-id');
-	const userData=$(btn).attr('data-user');
-	if(!id){
-		window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>ID pegawai tidak ditemukan.",status:"danger"},"*");
-		return false;
-	}
-	disableSubmit(btn);
-	bukaKontrakPegawai(id,userData,btn);
-	initPopoverPegawai();
-	$('#modal_size').removeClass('modal-lg').addClass('modal-xl');
-	return false;
+
+window.initKontrakPegawai=function(){
+    const modalElement=document.getElementById('modal');
+    window.modal=null;
+    if(modalElement){
+        window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
+            backdrop:'static',
+            keyboard:false
+        });
+    }
+    hitungDurasiKerja();
+    updateTanggalPegawai();
+    hitungTotalGajiPegawai();
+};
+
+$(document)
+.off('click.kontrakPegawai','.btn-kontrak-pegawai')
+.on('click.kontrakPegawai','.btn-kontrak-pegawai',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const btn=this;
+    const id=$(btn).attr('data-id')||$(btn).attr('data-user-id');
+    const userData=$(btn).attr('data-user');
+    if(!id){
+        window.top.postMessage({type:'flash_message',message:'<b>GAGAL!</b><br>ID pegawai tidak ditemukan.',status:'danger'},'*');
+        return false;
+    }
+    disableSubmit(btn);
+    bukaKontrakPegawai(id,userData,btn);
+    $('#modal_size').removeClass('modal-lg').addClass('modal-xl');
+    return false;
 });
-$(document).on('click','.btn-proses-pegawai-spk',function(e){
-	e.preventDefault();
-	e.stopPropagation();
-	const btn=this;
-	const id=$(btn).attr('data-id')||$(btn).attr('data-user-id');
-	const userData=$(btn).attr('data-user');
-	if(!id){
-		window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>ID pegawai tidak ditemukan.",status:"danger"},"*");
-		return false;
-	}
-	disableSubmit(btn);
-	bukaProsesPegawai(id,userData,btn);
-	return false;
+
+$(document)
+.off('click.kontrakPegawai','.btn-proses-pegawai-spk')
+.on('click.kontrakPegawai','.btn-proses-pegawai-spk',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const btn=this;
+    const id=$(btn).attr('data-id')||$(btn).attr('data-user-id');
+    const userData=$(btn).attr('data-user');
+    if(!id){
+        window.top.postMessage({type:'flash_message',message:'<b>GAGAL!</b><br>ID pegawai tidak ditemukan.',status:'danger'},'*');
+        return false;
+    }
+    disableSubmit(btn);
+    bukaProsesPegawai(id,userData,btn);
+    return false;
 });
-$(document).on('click','.btn-adendum-pegawai',function(e){
-	e.preventDefault();
-	e.stopPropagation();
-	const btn=this;
-	const id=$(btn).attr('data-id')||'';
-	if(!id){
-		window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>ID kontrak tidak ditemukan.",status:"danger"},"*");
-		return false;
-	}
-	bukaAdendumPegawai(id,btn);
-	$('#modal_size').removeClass('modal-xl').addClass('modal-lg');
-	return false;
+
+$(document)
+.off('click.kontrakPegawai','.btn-adendum-pegawai')
+.on('click.kontrakPegawai','.btn-adendum-pegawai',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const btn=this;
+    const id=$(btn).attr('data-id')||'';
+    if(!id){
+        window.top.postMessage({type:'flash_message',message:'<b>GAGAL!</b><br>ID kontrak tidak ditemukan.',status:'danger'},'*');
+        return false;
+    }
+    bukaAdendumPegawai(id,btn);
+    $('#modal_size').removeClass('modal-xl').addClass('modal-lg');
+    return false;
 });
-$(document).on('click','.btn-edit-pegawai',function(e){
-	e.preventDefault();
-	e.stopPropagation();
-	const btn=this;
-	const id=$(btn).attr('data-id')||'';
-	if(!id){
-		window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>ID kontrak tidak ditemukan.",status:"danger"},"*");
-		return false;
-	}
-	bukaEditPegawai(id,btn);
-	$('#modal_size').removeClass('modal-xl').addClass('modal-lg');
-	return false;
+
+$(document)
+.off('click.kontrakPegawai','.btn-edit-pegawai')
+.on('click.kontrakPegawai','.btn-edit-pegawai',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const btn=this;
+    const id=$(btn).attr('data-id')||'';
+    if(!id){
+        window.top.postMessage({type:'flash_message',message:'<b>GAGAL!</b><br>ID kontrak tidak ditemukan.',status:'danger'},'*');
+        return false;
+    }
+    bukaEditPegawai(id,btn);
+    $('#modal_size').removeClass('modal-xl').addClass('modal-lg');
+    return false;
 });
-$(document).on('click','.btn-cetak-spk-pegawai',function(e){
-	e.preventDefault();
-	e.stopPropagation();
-	const btn=this;
-	const id=$(btn).attr('data-id')||'';
-	if(!id){
-		window.parent.postMessage({type:"flash_message",message:"<b>GAGAL!</b><br>ID kontrak tidak ditemukan.",status:"danger"},"*");
-		return false;
-	}
-	disableSubmit(btn);
-	cetakSPKPegawai(id,btn);
-	return false;
+
+$(document)
+.off('click.kontrakPegawai','.btn-cetak-spk-pegawai')
+.on('click.kontrakPegawai','.btn-cetak-spk-pegawai',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const btn=this;
+    const id=$(btn).attr('data-id')||'';
+    if(!id){
+        window.top.postMessage({type:'flash_message',message:'<b>GAGAL!</b><br>ID kontrak tidak ditemukan.',status:'danger'},'*');
+        return false;
+    }
+    disableSubmit(btn);
+    cetakSPKPegawai(id,btn);
+    return false;
 });
-$(document).on('click','#btnSimpanLanjutKontrak',function(){
-	return simpanLanjutKontrak(this);
+
+$(document)
+.off('click.kontrakPegawai','#btnSimpanLanjutKontrak')
+.on('click.kontrakPegawai','#btnSimpanLanjutKontrak',function(){
+    return simpanLanjutKontrak(this);
 });
-$(document).on('input change','#data_pegawai_tgl_mulai_kerja,#data_pegawai_tgl_akhir_kerja',function(){
-	hitungDurasiKerja();
-	updateTanggalPegawai();
+
+$(document)
+.off('input.kontrakPegawai change.kontrakPegawai','#data_pegawai_tgl_mulai_kerja,#data_pegawai_tgl_akhir_kerja')
+.on('input.kontrakPegawai change.kontrakPegawai','#data_pegawai_tgl_mulai_kerja,#data_pegawai_tgl_akhir_kerja',function(){
+    hitungDurasiKerja();
+    updateTanggalPegawai();
 });
-$(document).on('input change','[id*="gaji_"]',function(){
-	hitungTotalGajiPegawai();
+
+$(document)
+.off('input.kontrakPegawai change.kontrakPegawai','[id*="gaji_"]')
+.on('input.kontrakPegawai change.kontrakPegawai','[id*="gaji_"]',function(){
+    hitungTotalGajiPegawai();
 });
 function parseDataKontrakPegawai(data){
 	if(typeof data==='object'&&data!==null)return data;
