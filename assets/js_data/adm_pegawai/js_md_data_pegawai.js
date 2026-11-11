@@ -6,7 +6,7 @@ window.dataPegawaiJsLoaded=true;
 /* =========================================================
    DATA GLOBAL PEGAWAI
 ========================================================= */
-window.dataPegawaiData=window.dataPegawaiData||[];
+window.dataPegawaiDetailData = window.dataPegawaiDetailData || [];
 window.bolehKelolaDataPegawai=window.bolehKelolaDataPegawai||false;
 window.modal=null;
 window.pegawaiDataId=null;
@@ -18,14 +18,90 @@ window.htmlTombolProsesPegawai='';
 ========================================================= */
 window.init_fungsi_pegawai=function(){
     const modalElement=document.getElementById('modal');
-    window.modal=null;
-    if(modalElement){
+    if(!modalElement){
+        console.error('Modal Data Pegawai tidak ditemukan.');
+        return false;
+    }
+    if(!window.bootstrap||!bootstrap.Modal){
+        console.error('Bootstrap Modal belum tersedia.');
+        return false;
+    }
+    try{
         window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
             backdrop:'static',
             keyboard:false
         });
+        return true;
+    }catch(error){
+        console.error('Gagal inisialisasi modal pegawai:',error);
+        return false;
     }
 };
+
+/* =========================================================
+   SIMPAN STATUS TOMBOL
+========================================================= */
+window.simpanStatusTombolPegawai=function(btn){
+    if(!btn)return;
+    if(window.tombolProsesPegawaiAktif&&window.tombolProsesPegawaiAktif!==btn){
+        window.restoreTombolPegawai();
+    }
+    if(window.tombolProsesPegawaiAktif!==btn){
+        window.tombolProsesPegawaiAktif=btn;
+        window.htmlTombolProsesPegawai=btn.innerHTML;
+    }
+};
+
+/* =========================================================
+   KEMBALIKAN TOMBOL PROSES / CETAK
+========================================================= */
+window.restoreTombolPegawai=function(){
+    const btn=window.tombolProsesPegawaiAktif;
+    if(!btn)return;
+    $(btn).prop('disabled',false)
+        .removeClass('disabled')
+        .removeAttr('aria-disabled');
+    btn.disabled=false;
+    if(window.htmlTombolProsesPegawai!==''){
+        btn.innerHTML=window.htmlTombolProsesPegawai;
+    }
+    window.tombolProsesPegawaiAktif=null;
+    window.htmlTombolProsesPegawai='';
+};
+
+/* =========================================================
+   TUTUP MODAL LAIN SEBELUM MEMBUKA MODAL PEGAWAI
+========================================================= */
+function tutupModalSebelumBuka(callback){
+    const modalTerbuka=document.querySelectorAll('.modal.show');
+    if(!modalTerbuka.length){
+        callback();
+        return;
+    }
+    if(typeof closeAllModal==='function'){
+        closeAllModal(callback);
+        return;
+    }
+    let jumlahModal=modalTerbuka.length;
+    modalTerbuka.forEach(function(element){
+        const instance=bootstrap.Modal.getOrCreateInstance(element);
+        element.addEventListener('hidden.bs.modal',function(){
+            jumlahModal--;
+            if(jumlahModal===0)callback();
+        },{once:true});
+        instance.hide();
+    });
+}
+
+/* =========================================================
+   BUKA MODAL DATA PEGAWAI
+========================================================= */
+function bukaModalPegawai(){
+    if(!window.init_fungsi_pegawai())return false;
+    if(!window.modal)return false;
+    window.modal.show();
+    return true;
+}
 
 /* =========================================================
    EVENT PROSES PEGAWAI
@@ -46,8 +122,7 @@ $(document)
         },'*');
         return false;
     }
-    window.tombolProsesPegawaiAktif=btn;
-    window.htmlTombolProsesPegawai=btn.innerHTML;
+    window.simpanStatusTombolPegawai(btn);
     bukaProsesDataPegawai(id,userData,btn);
     return false;
 });
@@ -71,8 +146,7 @@ $(document)
         },'*');
         return false;
     }
-    window.tombolProsesPegawaiAktif=btn;
-    window.htmlTombolProsesPegawai=btn.innerHTML;
+    window.simpanStatusTombolPegawai(btn);
     bukaCetakDataPegawai(id,userData,btn);
     return false;
 });
@@ -83,14 +157,8 @@ $(document)
 $(document)
 .off('hidden.bs.modal.dataPegawai','.modal')
 .on('hidden.bs.modal.dataPegawai','.modal',function(){
-    if(window.tombolProsesPegawaiAktif){
-        window.tombolProsesPegawaiAktif.disabled=false;
-        $(window.tombolProsesPegawaiAktif)
-            .prop('disabled',false)
-            .removeClass('disabled');
-        window.tombolProsesPegawaiAktif.innerHTML=window.htmlTombolProsesPegawai;
-        window.tombolProsesPegawaiAktif=null;
-        window.htmlTombolProsesPegawai='';
+    if(this.id==='modal'){
+        window.restoreTombolPegawai();
     }
 });
 
@@ -127,10 +195,11 @@ function bukaProsesDataPegawai(id,userData,btn){
             message:'<b>GAGAL!</b><br>Data pegawai tidak ditemukan.',
             status:'danger'
         },'*');
+        window.restoreTombolPegawai();
         return false;
     }
     if(btn)disableSubmit(btn);
-    closeAllModal(function(){
+    tutupModalSebelumBuka(function(){
         window.pegawaiDataId=id;
         const form=document.getElementById('formDataPegawai');
         if(form)form.reset();
@@ -145,10 +214,7 @@ function bukaProsesDataPegawai(id,userData,btn){
             kelurahan:user.kelurahan||''
         },function(berhasil){
             if(!berhasil){
-                if(btn){
-                    btn.disabled=false;
-                    $(btn).prop('disabled',false);
-                }
+                window.restoreTombolPegawai();
                 window.top.postMessage({
                     type:'flash_message',
                     message:'<b>GAGAL!</b><br>Data wilayah gagal dimuat.',
@@ -158,11 +224,13 @@ function bukaProsesDataPegawai(id,userData,btn){
             }
             Btn_Proses(user);
             cekDataKeluarga();
-            tampilkanmodal();
-            if(btn){
-                btn.disabled=false;
-                $(btn).prop('disabled',false);
-                $(btn).html('<i class="fa-light fa-gear"></i> Proses');
+            if(!bukaModalPegawai()){
+                window.restoreTombolPegawai();
+                window.top.postMessage({
+                    type:'flash_message',
+                    message:'<b>GAGAL!</b><br>Modal Data Pegawai gagal dibuka.',
+                    status:'danger'
+                },'*');
             }
         });
     });
@@ -194,10 +262,11 @@ function bukaCetakDataPegawai(id,userData,btn){
             message:'<b>GAGAL!</b><br>Data pegawai tidak ditemukan.',
             status:'danger'
         },'*');
+        window.restoreTombolPegawai();
         return false;
     }
     if(btn)disableSubmit(btn);
-    closeAllModal(function(){
+    tutupModalSebelumBuka(function(){
         window.pegawaiDataId=id;
         const form=document.getElementById('formDataPegawai');
         if(form)form.reset();
@@ -212,7 +281,7 @@ function bukaCetakDataPegawai(id,userData,btn){
             kelurahan:user.kelurahan||''
         },function(berhasil){
             if(!berhasil){
-                if(btn)btn.disabled=false;
+                window.restoreTombolPegawai();
                 window.top.postMessage({
                     type:'flash_message',
                     message:'<b>GAGAL!</b><br>Data wilayah gagal dimuat.',
@@ -221,11 +290,13 @@ function bukaCetakDataPegawai(id,userData,btn){
                 return;
             }
             Btn_Cetak(user);
-            tampilkanmodal();
-            if(btn){
-                btn.disabled=false;
-                $(btn).prop('disabled',false);
-                $(btn).html('<i class="fa-light fa-print"></i> Cetak');
+            if(!bukaModalPegawai()){
+                window.restoreTombolPegawai();
+                window.top.postMessage({
+                    type:'flash_message',
+                    message:'<b>GAGAL!</b><br>Modal Data Pegawai gagal dibuka.',
+                    status:'danger'
+                },'*');
             }
         });
     });
