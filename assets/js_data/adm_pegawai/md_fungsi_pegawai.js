@@ -1,5 +1,5 @@
 // MSN - Data Pegawai CDN
-window.dataPegawaiCdnLoaded=true;
+window.dataProfilPegawaiCdnLoaded=true;
 window.dataPegawaiData=window.dataPegawaiData||[];
 
 function isiProfilPegawai(user){
