@@ -1,11 +1,16 @@
-
 (function(){
 if(window.akunPegawaiJsLoaded)return;
-if(!window.jQuery||typeof bootstrap==='undefined'||!bootstrap.Modal){
-	console.error('jQuery atau Bootstrap Modal belum tersedia.');
-	return;
-}
-const $=window.jQuery;
+window.akunPegawaiJsLoaded=true;
+
+window.initAkunPegawai=function(){
+	const modalElement=document.getElementById('modal');
+	if(modalElement){
+		window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
+			backdrop:'static',
+			keyboard:false
+		});
+	}
+};
 
 function Btn_Tambah(){
 	$('#modalTitle').text('Proses Tambah Akun Pegawai');
@@ -14,19 +19,6 @@ function Btn_Tambah(){
 	$('#modalProfil .modal-body .card form div').addClass('text-success bg-light rounded');
 	$('#modalProfil .modal-body').addClass('border-0 shadow-none text-primary bg-soft-purple rounded');
 }
-
-// INISIALISASI MODAL
-window.initAkunPegawai=function(){
-	const modalElement=document.getElementById('modal');
-	if(modalElement){
-		window.modalAkunPegawai=bootstrap.Modal.getOrCreateInstance(modalElement,{
-			backdrop:'static',
-			keyboard:false
-		});
-	}else{
-		window.modalAkunPegawai=null;
-	}
-};
 
 // MODAL TAMBAH PEGAWAI
 $(document)
@@ -65,7 +57,7 @@ $(document)
 		},'*');
 		return false;
 	}
-	const user=window.parseDataAkunPegawai(rawData);
+	const user=parseDataPegawai(rawData);
 	if(!user||!user.user_id){
 		window.parent.postMessage({
 			type:'flash_message',
@@ -74,7 +66,7 @@ $(document)
 		},'*');
 		return false;
 	}
-	window.bukaEditAkunPegawai(user,btn);
+	bukaEditPegawai(user,btn);
 	return false;
 });
 
@@ -86,7 +78,7 @@ $(document)
 	const confirm=document.getElementById('edit_password_confirm');
 	const message=document.getElementById('password_match_message');
 	if(password&&confirm&&message){
-		window.checkPasswordPegawai(password,confirm,message);
+		checkPasswordPegawai(password,confirm,message);
 	}
 });
 
@@ -97,15 +89,14 @@ $(document)
 	const password=document.getElementById('edit_password');
 	const confirm=document.getElementById('edit_password_confirm');
 	const message=document.getElementById('password_match_message');
-	if(password&&confirm&&message&&!window.checkPasswordPegawai(password,confirm,message)){
+	if(password&&confirm&&message&&!checkPasswordPegawai(password,confirm,message)){
 		e.preventDefault();
 		confirm.focus();
 		return false;
 	}
 });
 
-// PARSE DATA PEGAWAI
-window.parseDataAkunPegawai=function(data){
+window.parseDataPegawai=function(data){
 	if(typeof data==='object'&&data!==null)return data;
 	try{
 		return JSON.parse(data||'{}');
@@ -116,8 +107,7 @@ window.parseDataAkunPegawai=function(data){
 	}
 };
 
-// BUKA EDIT AKUN PEGAWAI
-window.bukaEditAkunPegawai=function(user,btn){
+window.bukaEditPegawai=function(user,btn){
 	if(!user||!user.user_id){
 		if(btn){
 			$(btn).prop('disabled',false).removeAttr('disabled').html('<i class="fa-light fa-gear"></i> Proses');
@@ -129,14 +119,13 @@ window.bukaEditAkunPegawai=function(user,btn){
 		},'*');
 		return false;
 	}
-	if(btn)disableSubmit(btn);
 	closeAllModal(function(){
 		const form=document.getElementById('formEditPegawai');
 		if(form)form.reset();
 		isiProfilPegawai(user);
 		isiDataUsers(user);
 		WarnaPrimary();
-		window.Btn_ProsesAkunPegawai(user);
+		Btn_Proses(user);
 		$('#edit_password,#edit_password_confirm').val('').removeClass('is-valid is-invalid');
 		$('#password_match_message').text('').removeClass('text-danger text-success');
 		$('#edit_status').val(user.status||'aktif');
@@ -158,15 +147,13 @@ window.bukaEditAkunPegawai=function(user,btn){
 	return true;
 };
 
-// TAMPILAN EDIT AKUN PEGAWAI
-window.Btn_ProsesAkunPegawai=function(user){
+window.Btn_Proses=function(user){
 	$('#modalTitle').text('Proses Edit Akun Pegawai');
 	$('#modalNamaPegawai').text(user.nama_lengkap||'-');
 	$('#modalNIPKPegawai').text(user.nipk||'-');
 	$('#FormLanjutKontrak').removeClass('d-none');
 };
 
-// TOGGLE PASSWORD
 window.togglePassword=function(inputId,button){
 	const input=document.getElementById(inputId);
 	if(!input)return;
@@ -188,7 +175,6 @@ window.togglePassword=function(inputId,button){
 	}
 };
 
-// CEK KECOCOKAN PASSWORD
 window.checkPasswordPegawai=function(password,confirm,message){
 	const pass=password.value;
 	const conf=confirm.value;
@@ -229,7 +215,6 @@ window.checkPasswordPegawai=function(password,confirm,message){
 	return true;
 };
 
-// VALIDASI PASSWORD SEBELUM SUBMIT
 window.validatePasswordBeforeSubmit=function(btn){
 	const password=document.getElementById('edit_password');
 	const confirm=document.getElementById('edit_password_confirm');
@@ -255,5 +240,4 @@ window.validatePasswordBeforeSubmit=function(btn){
 	return disableSubmit(btn);
 };
 
-window.akunPegawaiJsLoaded=true;
 })();
