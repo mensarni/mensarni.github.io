@@ -79,10 +79,6 @@ $(document).ready(function(){
 		return simpanDataPegawai(this);
 	});
 
-	$(document).on('click','#btnCetakPegawai,#btnCetakDataPegawai',function(e){
-		e.preventDefault();
-		cetakDataPegawai();
-	});
 });
 
 function parseDataPegawai(userData){
