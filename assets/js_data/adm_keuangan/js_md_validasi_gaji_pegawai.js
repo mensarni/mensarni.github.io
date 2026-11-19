@@ -1,8 +1,13 @@
 (function(){
 if(window.validasiGajiPegawaiJsLoaded)return;
 window.validasiGajiPegawaiJsLoaded=true;
+   
+/* =========================================================
+   DATA GLOBAL PEGAWAI
+========================================================= */
 window.dataValidasiGajiPegawai=window.dataValidasiGajiPegawai||[];
 window.bolehKelolaValidasiGajiPegawai=window.bolehKelolaValidasiGajiPegawai||false;
+window.modal=null;
 window.modalValidasiGajiPegawai=null;
 window.validasiGajiPegawaiId=null;
 let sudahInit=false;
@@ -11,14 +16,10 @@ let sudahInit=false;
    INIT MODUL
 ========================================================= */
 window.init_fungsi_validasi_gaji_pegawai=function(){
-    if(sudahInit)return true;
-    if(typeof $==='undefined'||typeof bootstrap==='undefined'){
-        console.error('jQuery atau Bootstrap belum tersedia.');
-        return false;
-    }
     const modalElement=document.getElementById('modal');
+    window.modal=null;
     if(modalElement){
-        window.modalValidasiGajiPegawai=bootstrap.Modal.getOrCreateInstance(modalElement,{
+        window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
             backdrop:'static',
             keyboard:false
         });
