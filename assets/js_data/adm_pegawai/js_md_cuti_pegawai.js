@@ -1,4 +1,3 @@
-
 (function(){
 if(window.cutiPegawaiJsLoaded)return;
 window.cutiPegawaiJsLoaded=true;
@@ -17,7 +16,7 @@ window.init_fungsi_cuti_pegawai=function(){
     const modalElement=document.getElementById('modal');
     window.modalCutiPegawai=null;
     if(!modalElement){
-        console.error('Modal cuti pegawai tidak ditemukan.');
+        console.error('Modal Cuti Pegawai tidak ditemukan.');
         return false;
     }
     if(!window.bootstrap||!bootstrap.Modal){
@@ -28,7 +27,6 @@ window.init_fungsi_cuti_pegawai=function(){
         backdrop:'static',
         keyboard:false
     });
-    initPaginationCuti();
     return true;
 };
 
@@ -44,48 +42,30 @@ function pesancuti(message,status){
 }
 
 /* =========================================================
-   KOSONGKAN MODAL CUTI
+   BERSIHKAN MODAL DAN FORM CUTI
 ========================================================= */
 function bersihkanModalCuti(){
     const form=document.getElementById('formproses');
     if(form){
         form.reset();
-        $(form).find('.is-invalid').removeClass('is-invalid');
-        $(form).find(':input').prop('disabled',false);
+        $(form).find('input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),textarea').val('');
+        $(form).find('select').prop('selectedIndex',0);
+        $(form).find('input[type="checkbox"],input[type="radio"]').prop('checked',false);
+        $(form).find('input[type="file"]').val('');
+        $(form).find('input[type="hidden"]').not('[name="csrf"],[name="_csrf"],[name="csrf_token"],[name="token"]').val('');
+        $(form).find(':input').prop('disabled',false).removeClass('is-invalid');
     }
     $('#user_id,#cuti_id,#action').val('');
     $('#cuti_nama,#cuti_nipk').val('');
-    $('#cuti_terpakai').val(0);
+    $('#cuti_terpakai').val('0');
     $('#modalNamaPegawai,#modalNIPKPegawai').text('');
     $('#form_proses_cuti').addClass('d-none');
     $('#list_tabel_cuti').addClass('d-none');
     $('#btnKembali,#btnSimpancuti').addClass('d-none');
     $('#btnTutup').removeClass('d-none');
-    $('#modal-dialog').removeClass('modal-lg modal-xl');
-    $('#modalTitle').text('');
+    $('#modal-dialog').removeClass('modal-lg modal-dialog-scrollable').addClass('modal-xl');
     if(typeof window.resetTanggalCuti==='function'){
         window.resetTanggalCuti();
-    }
-}
-
-/* =========================================================
-   BUKA MODAL CUTI
-========================================================= */
-function tampilkanModalCuti(){
-    if(!window.modalCutiPegawai){
-        window.init_fungsi_cuti_pegawai();
-    }
-    if(!window.modalCutiPegawai){
-        pesancuti('<b>GAGAL!</b><br>Modal cuti pegawai tidak dapat diinisialisasi.');
-        return false;
-    }
-    try{
-        window.modalCutiPegawai.show();
-        return true;
-    }catch(error){
-        console.error('Gagal membuka modal cuti:',error);
-        pesancuti('<b>GAGAL!</b><br>'+String(error.message||error));
-        return false;
     }
 }
 
@@ -112,7 +92,21 @@ function cariDataPegawaicuti(userId){
 }
 
 /* =========================================================
-   EVENT BUKA MODAL AMBIL PEGAWAI
+   BUKA MODAL LIST PEGAWAI
+========================================================= */
+window.bukaModalAmbilPegawaiCuti=function(){
+    if(!window.modalCutiPegawai&&!window.init_fungsi_cuti_pegawai()){
+        pesancuti('<b>GAGAL!</b><br>Modal Cuti tidak dapat diinisialisasi.');
+        return false;
+    }
+    bersihkanModalCuti();
+    btn_list_tabel_cuti();
+    window.modalCutiPegawai.show();
+    return true;
+};
+
+/* =========================================================
+   EVENT BUKA MODAL LIST CUTI
 ========================================================= */
 $(document)
 .off('click.cutiPegawai','#btnBukaModalCuti')
@@ -124,7 +118,7 @@ $(document)
 });
 
 /* =========================================================
-   EVENT TOMBOL BUKA MODAL CUTI
+   EVENT TOMBOL AMBIL CUTI
 ========================================================= */
 $(document)
 .off('click.cutiPegawai','.btn-ambil-cuti-pegawai')
@@ -191,11 +185,7 @@ $(document)
     const form=btn.closest('form');
     if(!form){
         e.preventDefault();
-        window.parent.postMessage({
-            type:'flash_message',
-            message:'<b>Gagal!</b><br>Formulir tidak ditemukan.',
-            status:'danger'
-        },'*');
+        pesancuti('<b>GAGAL!</b><br>Formulir tidak ditemukan.');
         return false;
     }
     if(!form.checkValidity()){
@@ -221,24 +211,28 @@ $(document)
 });
 
 /* =========================================================
-   BUKA MODAL LIST PEGAWAI
+   KEMBALI KE LIST SAAT MODAL DITUTUP
 ========================================================= */
-window.bukaModalAmbilPegawaiCuti=function(){
-    bersihkanModalCuti();
-    btn_list_tabel_cuti();
-    return tampilkanModalCuti();
-};
+$(document)
+.off('hidden.bs.modal.cutiPegawai','.modal')
+.on('hidden.bs.modal.cutiPegawai','.modal',function(){
+    if(this.id==='modal'){
+        bersihkanModalCuti();
+    }
+});
 
 /* =========================================================
    BUKA PROSES CUTI PEGAWAI
 ========================================================= */
 function bukaProsescutiPegawai(id,userData){
     let user=parseDatacutiPegawai(userData);
-    if(!user||!user.user_id){
-        user=cariDataPegawaicuti(id);
-    }
+    if(!user||!user.user_id)user=cariDataPegawaicuti(id);
     if(!user||!user.user_id){
         pesancuti('<b>GAGAL!</b><br>Data pegawai tidak ditemukan.');
+        return false;
+    }
+    if(!window.modalCutiPegawai&&!window.init_fungsi_cuti_pegawai()){
+        pesancuti('<b>GAGAL!</b><br>Modal Cuti tidak dapat diinisialisasi.');
         return false;
     }
     bersihkanModalCuti();
@@ -247,7 +241,8 @@ function bukaProsescutiPegawai(id,userData){
     if(typeof WarnaPrimary==='function')WarnaPrimary();
     isiDataPegawaicuti(user);
     btn_proses_cuti(id,user.nama_lengkap,user.nipk);
-    return tampilkanModalCuti();
+    window.modalCutiPegawai.show();
+    return true;
 }
 
 /* =========================================================
@@ -255,9 +250,7 @@ function bukaProsescutiPegawai(id,userData){
 ========================================================= */
 function isiDataPegawaicuti(user){
     user=user||{};
-    if(typeof window.isiDataPegawai==='function'){
-        window.isiDataPegawai(user);
-    }
+    if(typeof isiDataPegawai==='function')isiDataPegawai(user);
     $('#user_id').val(user.user_id||'');
     $('#cuti_nama').val(user.nama_lengkap||'');
     $('#cuti_nipk').val(user.nipk||'');
@@ -275,7 +268,7 @@ function btn_proses_cuti(id,nama_lengkap,nipk){
     $('#modalNamaPegawai').text(nama_lengkap||'-');
     $('#modalNIPKPegawai').text(nipk||'-');
     $('#btnKembali').removeClass('d-none');
-    $('#btnSimpancuti').removeClass('d-none');
+    $('#btnSimpancuti').removeClass('d-none').prop('disabled',false);
     $('#btnTutup').addClass('d-none');
     $('#action').val('ajuan_cuti');
     $('#cuti_id').val('');
@@ -339,7 +332,7 @@ function btn_edit_cuti(id,nama_lengkap,nipk){
     $('#list_tabel_cuti').addClass('d-none');
     $('#form_proses_cuti').removeClass('d-none');
     $('#btnKembali').removeClass('d-none');
-    $('#btnSimpancuti').removeClass('d-none');
+    $('#btnSimpancuti').removeClass('d-none').prop('disabled',false);
     $('#btnTutup').addClass('d-none');
     $('#action').val('update_cuti');
     if(typeof WarnaPrimary==='function')WarnaPrimary();
@@ -352,11 +345,11 @@ window.edit_cuti=function(data){
     data=data||{};
     const form=document.getElementById('formproses');
     if(!form){
-        window.parent.postMessage({
-            type:'flash_message',
-            message:'<b>GAGAL!</b><br>Form tidak ditemukan.',
-            status:'danger'
-        },'*');
+        pesancuti('<b>GAGAL!</b><br>Form tidak ditemukan.');
+        return false;
+    }
+    if(!window.modalCutiPegawai&&!window.init_fungsi_cuti_pegawai()){
+        pesancuti('<b>GAGAL!</b><br>Modal Cuti tidak dapat diinisialisasi.');
         return false;
     }
     bersihkanModalCuti();
@@ -364,12 +357,30 @@ window.edit_cuti=function(data){
     const nama=pegawai.nama_lengkap||data.nama_lengkap||data.nama||'';
     const nipk=pegawai.nipk||data.nipk||'';
     const field=[
-        'id','user_id','status_pegawai','jenis_cuti','alasan_cuti',
-        'tgl_mulai','tgl_selesai','jumlah_hari','alamat_cuti',
-        'no_hp_selama_cuti','status_pengajuan','tanggal_pengajuan',
-        'tanggal_disetujui','catatan_persetujuan','nomor_surat',
-        'potong_saldo','verifikator_id','verifikator','jab_verifikator',
-        'ppk_id','ppk','jab_ppk','created_at','updated_at'
+        'id',
+        'user_id',
+        'status_pegawai',
+        'jenis_cuti',
+        'alasan_cuti',
+        'tgl_mulai',
+        'tgl_selesai',
+        'jumlah_hari',
+        'alamat_cuti',
+        'no_hp_selama_cuti',
+        'status_pengajuan',
+        'tanggal_pengajuan',
+        'tanggal_disetujui',
+        'catatan_persetujuan',
+        'nomor_surat',
+        'potong_saldo',
+        'verifikator_id',
+        'verifikator',
+        'jab_verifikator',
+        'ppk_id',
+        'ppk',
+        'jab_ppk',
+        'created_at',
+        'updated_at'
     ];
     field.forEach(function(id){
         isiInputcuti(form,id,data[id]);
@@ -394,8 +405,12 @@ window.edit_cuti=function(data){
     );
     isiDataPegawaicuti(pegawai);
     [
-        'verifikator_id','verifikator','jab_verifikator',
-        'ppk_id','ppk','jab_ppk'
+        'verifikator_id',
+        'verifikator',
+        'jab_verifikator',
+        'ppk_id',
+        'ppk',
+        'jab_ppk'
     ].forEach(function(id){
         const input=form.querySelector('[name="'+id+'"], #'+id);
         if(input)input.value=data[id]||'';
@@ -404,7 +419,8 @@ window.edit_cuti=function(data){
     if(action)action.value='update_cuti';
     window.pegawaicutiId=data.user_id||null;
     btn_edit_cuti(data.id,nama,nipk);
-    return tampilkanModalCuti();
+    window.modalCutiPegawai.show();
+    return true;
 };
 
 /* =========================================================
@@ -455,7 +471,7 @@ function simpancutiPegawai(btn){
 /* =========================================================
    PAGINATION TABEL PEGAWAI
 ========================================================= */
-function initPaginationCuti(){
+(function(){
     const tbody=document.getElementById('daftarPegawai');
     const pagination=document.getElementById('paginationPegawai');
     const info=document.getElementById('infoPaginationPegawai');
@@ -464,8 +480,6 @@ function initPaginationCuti(){
         console.warn('Elemen tabel atau pagination cuti tidak ditemukan.');
         return;
     }
-    if(tbody.dataset.cutiPaginationInit==='1')return;
-    tbody.dataset.cutiPaginationInit='1';
     const semuaBaris=Array.from(tbody.querySelectorAll('tr'));
     const perHalaman=10;
     let halamanAktif=1;
@@ -473,9 +487,7 @@ function initPaginationCuti(){
     function renderPagination(){
         const total=hasilFilter.length;
         const totalHalaman=Math.ceil(total/perHalaman);
-        if(halamanAktif>totalHalaman){
-            halamanAktif=Math.max(1,totalHalaman);
-        }
+        if(halamanAktif>totalHalaman)halamanAktif=Math.max(1,totalHalaman);
         semuaBaris.forEach(function(baris){
             baris.style.display='none';
         });
@@ -514,7 +526,7 @@ function initPaginationCuti(){
         }
     }
     if(pencarian){
-        $(pencarian).off('input.cutiPegawai').on('input.cutiPegawai',function(){
+        pencarian.addEventListener('input',function(){
             const kata=this.value.toLowerCase().trim();
             hasilFilter=semuaBaris.filter(function(baris){
                 return baris.textContent.toLowerCase().indexOf(kata)!==-1;
@@ -524,7 +536,7 @@ function initPaginationCuti(){
         });
     }
     renderPagination();
-}
+})();
 
 /* =========================================================
    KONFIRMASI HAPUS
@@ -554,14 +566,5 @@ window.konfirmasiHapuscuti=function(form){
     }
     return true;
 };
-
-/* =========================================================
-   EVENT TUTUP MODAL
-========================================================= */
-$(document)
-.off('hidden.bs.modal.cutiPegawai','#modal')
-.on('hidden.bs.modal.cutiPegawai','#modal',function(){
-    bersihkanModalCuti();
-});
 
 })();
