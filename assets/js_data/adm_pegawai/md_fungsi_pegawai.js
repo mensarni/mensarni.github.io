@@ -130,6 +130,7 @@ function isiDataProfilPegawai(user){
     $('#data_pegawai_bpjs_jkk').prop('checked', Number(user.bpjs_jkk) === 1);
     $('#data_pegawai_bpjs_jkm').prop('checked', Number(user.bpjs_jkm) === 1);
     $('#data_pegawai_bpjs_jkp').prop('checked', Number(user.bpjs_jkp) === 1);
+    $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
 }
 
 function isiCetakProfilPegawai(user){
