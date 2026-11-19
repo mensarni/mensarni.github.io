@@ -5,7 +5,6 @@ window.arsipPegawaiJsLoaded=true;
 window.dataArsipPegawai=window.dataArsipPegawai||[];
 window.modal=null;
 window.pegawaiArsipId=null;
-
 window.initArsipPegawai=function(){
     const modalElement=document.getElementById('modal');
     window.modal=null;
@@ -16,7 +15,6 @@ window.initArsipPegawai=function(){
         });
     }
 };
-
 $(document)
 .off('click.arsipPegawai','.btn-proses-arsip-pegawai')
 .on('click.arsipPegawai','.btn-proses-arsip-pegawai',function(e){
@@ -32,7 +30,6 @@ $(document)
     bukaProsesArsipPegawai(id,userData,ibuKandung);
     return false;
 });
-
 $(document)
 .off('click.arsipPegawai','.btn-riwayat-arsip-pegawai')
 .on('click.arsipPegawai','.btn-riwayat-arsip-pegawai',function(e){
@@ -47,13 +44,11 @@ $(document)
     bukaArsipPegawai(id,userData);
     return false;
 });
-
 $(document)
 .off('click.arsipPegawai','#btnSimpanArsipPegawai')
 .on('click.arsipPegawai','#btnSimpanArsipPegawai',function(e){
     return simpanArsipPegawai(this);
 });
-
 function parseDataArsipPegawai(data){
     if(typeof data==='object'&&data!==null)return data;
     try{
@@ -62,12 +57,11 @@ function parseDataArsipPegawai(data){
         return {};
     }
 }
-    
 function isiIbuKandungArsip(user,form){
     if(!form)return;
     const input=form.querySelector('[name="ibu_kandung"]');
     if(input)input.value=user.ibu_kandung??'';
-    
+}
 function bukaProsesArsipPegawai(id,userData,ibuKandung){
     const user=parseDataArsipPegawai(userData);
     if(!user||!user.user_id){
@@ -83,12 +77,11 @@ function bukaProsesArsipPegawai(id,userData,ibuKandung){
         WarnaPrimary();
         isiDataPegawai(user);
         const inputIbu=form?form.querySelector('[name="ibu_kandung"]'):null;
-        if(inputIbu)inputIbu.value=ibuKandung;
+        if(inputIbu)inputIbu.value=ibuKandung!==undefined?ibuKandung:(user.ibu_kandung||'');
         Btn_ProsesArsip(user);
         tampilkanmodal();
     });
 }
-    
 function bukaArsipPegawai(id,userData){
     const user=parseDataArsipPegawai(userData);
     if(!user||!user.user_id){
@@ -109,7 +102,6 @@ function bukaArsipPegawai(id,userData){
         tampilkanmodal();
     });
 }
-
 function Btn_ProsesArsip(user){
     $('#modalTitle').text('Proses Update Arsip / Dokumen Pegawai');
     $('#modalNamaPegawai').text(user.nama_lengkap||user.name||'-');
@@ -119,7 +111,6 @@ function Btn_ProsesArsip(user){
     $('#btnSimpanArsipPegawai').removeClass('d-none');
     $('#form_action').val('update');
 }
-
 function Btn_ListArsip(user){
     $('#modalTitle').text('Arsip / Dokumen Pegawai');
     $('#modalNamaPegawai').text(user.nama_lengkap||user.name||'-');
@@ -128,7 +119,6 @@ function Btn_ListArsip(user){
     $('#boxListArsipPegawai').removeClass('d-none');
     $('#btnSimpanArsipPegawai').addClass('d-none');
 }
-
 function isiListArsipPegawai(user){
     const list=user.arsip_bpjs||[];
     let html='';
@@ -138,7 +128,6 @@ function isiListArsipPegawai(user){
     if(!html)html='<tr><td colspan="5" class="text-center text-muted">Belum ada arsip BPJS.</td></tr>';
     $('#list_arsip_pegawai').html(html);
 }
-
 function simpanArsipPegawai(btn){
     const form=document.getElementById('form_arsip_pegawai');
     if(!form){
@@ -179,7 +168,6 @@ function simpanArsipPegawai(btn){
     if(btn)disableSubmit(btn);
     return true;
 }
-
 function escapeHtml(value){
     return $('<div>').text(value==null?'':value).html();
 }
