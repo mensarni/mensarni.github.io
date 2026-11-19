@@ -1,39 +1,41 @@
 (function(){
 if(window.validasiGajiPegawaiJsLoaded)return;
 window.validasiGajiPegawaiJsLoaded=true;
-   
-/* =========================================================
-   DATA GLOBAL PEGAWAI
-========================================================= */
 window.dataValidasiGajiPegawai=window.dataValidasiGajiPegawai||[];
 window.bolehKelolaValidasiGajiPegawai=window.bolehKelolaValidasiGajiPegawai||false;
-window.modal=null;
 window.modalValidasiGajiPegawai=null;
 window.validasiGajiPegawaiId=null;
 let sudahInit=false;
-
+let tombolValidasiAktif=null;
+let htmlTombolValidasi='';
 /* =========================================================
    INIT MODUL
 ========================================================= */
 window.init_fungsi_validasi_gaji_pegawai=function(){
-    const modalElement=document.getElementById('modal');
-    window.modal=null;
-    if(modalElement){
-        window.modal=bootstrap.Modal.getOrCreateInstance(modalElement,{
-            backdrop:'static',
-            keyboard:false
-        });
+    if(typeof window.jQuery==='undefined'){
+        console.error('jQuery belum tersedia.');
+        return false;
     }
+    if(typeof bootstrap==='undefined'||!bootstrap.Modal){
+        console.error('Bootstrap Modal belum tersedia.');
+        return false;
+    }
+    const modalElement=document.getElementById('modal');
+    if(!modalElement){
+        console.error('Elemen modal dengan ID modal tidak ditemukan.');
+        return false;
+    }
+    window.modalValidasiGajiPegawai=bootstrap.Modal.getOrCreateInstance(modalElement,{backdrop:'static',keyboard:false});
+    if(sudahInit)return true;
     pasangEventValidasiGaji();
     sudahInit=true;
     return true;
 };
-
 /* =========================================================
    EVENT MODUL
 ========================================================= */
 function pasangEventValidasiGaji(){
-    $(document).on('click','.btn-detail-verif-pegawai',function(e){
+    $(document).on('click.validasiGaji','.btn-detail-verif-pegawai',function(e){
         e.preventDefault();
         e.stopPropagation();
         const btn=this;
@@ -43,60 +45,72 @@ function pasangEventValidasiGaji(){
             pesanValidasiGaji('<b>GAGAL!</b><br>ID pegawai tidak ditemukan.','danger');
             return false;
         }
+        simpanTombolValidasi(btn);
         bukaValidasiGaji(id,userData,btn);
     });
-
-    $(document).on('click','#btnCetakPegawai,#btnCetakDataPegawai',function(e){
+    $(document).on('click.validasiGaji','#btnCetakPegawai,#btnCetakDataPegawai',function(e){
         e.preventDefault();
-        cetakDataPegawai();
+        if(typeof window.cetakDataPegawai==='function'){
+            window.cetakDataPegawai();
+        }else if(typeof window.cetakDataPegawaiAsli==='function'){
+            window.cetakDataPegawaiAsli();
+        }else{
+            pesanValidasiGaji('<b>GAGAL!</b><br>Fungsi cetakDataPegawai belum tersedia.','danger');
+        }
     });
-
-    $(document).on('click','#btnValidasiGaji',function(e){
+    $(document).on('click.validasiGaji','#btnValidasiGaji',function(e){
         e.preventDefault();
         prosesValidasiGaji(this);
     });
-
-    $(document).on('click','#btnValidasiTolakGaji',function(e){
+    $(document).on('click.validasiGaji','#btnValidasiTolakGaji',function(e){
         e.preventDefault();
         prosesTolakGaji(this);
     });
-
-    $(document).on('input change','[id*="gaji_"]',hitungTotalGajiPegawai);
-
-    $(document).on('input change','#data_pegawai_tgl_mulai_kerja,#data_pegawai_tgl_akhir_kerja',hitungDurasiKerja);
-
-    $(document).on('change','#ppk_st_select',function(){
+    $(document).on('input.validasiGaji change.validasiGaji','[id*="gaji_"]',hitungTotalGajiPegawai);
+    $(document).on('input.validasiGaji change.validasiGaji','#data_pegawai_tgl_mulai_kerja,#data_pegawai_tgl_akhir_kerja',hitungDurasiKerja);
+    $(document).on('change.validasiGaji','#ppk_st_select',function(){
         const opt=$(this).find(':selected');
         $('#ppk_id_st').val(opt.attr('data-id-st')||'');
         $('#ppk_st').val(opt.val()||'');
         $('#jab_ppk_st').val(opt.attr('data-jabatan-st')||'');
         $('#status_ppk_st').val(opt.attr('data-status-st')||'');
     });
-
-    $(document).on('change','#ppk_spk_select',function(){
+    $(document).on('change.validasiGaji','#ppk_spk_select',function(){
         const opt=$(this).find(':selected');
         $('#ppk_id_spk').val(opt.attr('data-id-spk')||'');
         $('#ppk_spk').val(opt.val()||'');
         $('#jab_ppk_spk').val(opt.attr('data-jabatan-spk')||'');
         $('#status_ppk_spk').val(opt.attr('data-status-spk')||'');
     });
-
-    $(document).on('shown.bs.modal','.modal',function(){
+    $(document).on('shown.bs.modal.validasiGaji','.modal',function(){
         $(this).find('#ppk_st_select,#ppk_spk_select').trigger('change');
     });
+    $(document).on('hidden.bs.modal.validasiGaji','#modal',function(){
+        pulihkanTombolValidasi();
+    });
 }
-
+/* =========================================================
+   TOMBOL PEMICU
+========================================================= */
+function simpanTombolValidasi(btn){
+    if(!btn)return;
+    tombolValidasiAktif=btn;
+    htmlTombolValidasi=$(btn).html();
+    $(btn).prop('disabled',true);
+}
+function pulihkanTombolValidasi(){
+    if(!tombolValidasiAktif)return;
+    $(tombolValidasiAktif).prop('disabled',false).removeAttr('disabled');
+    if(htmlTombolValidasi)$(tombolValidasiAktif).html(htmlTombolValidasi);
+    tombolValidasiAktif=null;
+    htmlTombolValidasi='';
+}
 /* =========================================================
    PESAN
 ========================================================= */
 function pesanValidasiGaji(message,status){
-    window.parent.postMessage({
-        type:'flash_message',
-        message:message,
-        status:status||'danger'
-    },'*');
+    window.parent.postMessage({type:'flash_message',message:message,status:status||'danger'},'*');
 }
-
 /* =========================================================
    PARSE DATA PEGAWAI
 ========================================================= */
@@ -109,7 +123,44 @@ function parseDataPegawai(userData){
         return {};
     }
 }
-
+/* =========================================================
+   TUTUP MODAL LAIN DAN BUKA MODAL VALIDASI
+========================================================= */
+function tutupModalLain(callback){
+    const modalElement=document.getElementById('modal');
+    const modalLain=Array.from(document.querySelectorAll('.modal.show')).filter(function(el){
+        return el!==modalElement;
+    });
+    if(modalLain.length===0){
+        callback();
+        return;
+    }
+    let sisa=modalLain.length;
+    modalLain.forEach(function(el){
+        el.addEventListener('hidden.bs.modal',function(){
+            sisa--;
+            if(sisa===0)callback();
+        },{once:true});
+        const instance=bootstrap.Modal.getOrCreateInstance(el);
+        instance.hide();
+    });
+}
+function bukaModalValidasi(){
+    const modalElement=document.getElementById('modal');
+    if(!modalElement){
+        pesanValidasiGaji('<b>GAGAL!</b><br>Modal tidak ditemukan.','danger');
+        pulihkanTombolValidasi();
+        return false;
+    }
+    if(typeof bootstrap==='undefined'||!bootstrap.Modal){
+        pesanValidasiGaji('<b>GAGAL!</b><br>Bootstrap Modal belum tersedia.','danger');
+        pulihkanTombolValidasi();
+        return false;
+    }
+    window.modalValidasiGajiPegawai=bootstrap.Modal.getOrCreateInstance(modalElement,{backdrop:'static',keyboard:false});
+    window.modalValidasiGajiPegawai.show();
+    return true;
+}
 /* =========================================================
    BUKA MODAL VALIDASI GAJI
 ========================================================= */
@@ -117,37 +168,30 @@ function bukaValidasiGaji(id,userData,btn){
     const user=parseDataPegawai(userData);
     if(!user||!user.user_id){
         pesanValidasiGaji('<b>GAGAL!</b><br>Data pegawai tidak ditemukan.','danger');
+        pulihkanTombolValidasi();
         return false;
     }
-    if(btn)disableSubmit(btn);
-    closeAllModal(function(){
+    if(typeof window.init_fungsi_validasi_gaji_pegawai==='function'&&!window.init_fungsi_validasi_gaji_pegawai()){
+        pulihkanTombolValidasi();
+        return false;
+    }
+    tutupModalLain(function(){
         window.validasiGajiPegawaiId=id;
         const form=document.getElementById('formDataPegawai');
         if(form)form.reset();
         $('#pegawai_id').val('');
         $('#pegawai_user_id').val(id);
-        isiDataPegawai(user);
+        if(typeof window.isiDataPegawai==='function')window.isiDataPegawai(user);
         isiDataValidasiGaji(user);
         Validasi_Pelatihan(user);
         Validasi_Aksi(user);
         hitungTotalGajiPegawai();
         hitungDurasiKerja();
         Btn_Validasi_Gaji(user);
-        if(btn){
-            btn.disabled=false;
-            $(btn).prop('disabled',false).removeAttr('disabled');
-            $(btn).html('<i class="fa-light fa-square-check"></i> Validasi Gaji');
-            setTimeout(function(){
-                btn.disabled=false;
-                $(btn).prop('disabled',false).removeAttr('disabled');
-                $(btn).html('<i class="fa-light fa-square-check"></i> Validasi Gaji');
-            },300);
-        }
-        tampilkanmodal();
+        bukaModalValidasi();
     });
     return true;
 }
-
 /* =========================================================
    DATA KHUSUS VALIDASI GAJI
 ========================================================= */
@@ -155,7 +199,6 @@ function isiDataValidasiGaji(user){
     user=user||{};
     $('#data_pegawai_catatan').val(user.gg_catatan_pegawai||'');
 }
-
 /* =========================================================
    VALIDASI CATATAN PEGAWAI
 ========================================================= */
@@ -167,7 +210,6 @@ function Validasi_Pelatihan(user){
     if(!tanggalPelatihan)return;
     tanggalPelatihan.style.display=catatanPegawai.includes('edit')?'':'none';
 }
-
 /* =========================================================
    VALIDASI AKSI
 ========================================================= */
@@ -175,27 +217,25 @@ function Validasi_Aksi(user){
     const catatan=(user.gg_catatan_pegawai||'').toLowerCase().trim();
     const inputAction=document.querySelector('#formDataPegawai input[name="action"]');
     if(!inputAction)return;
-
     if(catatan.includes('edit')){
         inputAction.value='edit';
         $('#dt_pelatihan').addClass('d-none');
-        WarnaPrimary();
+        if(typeof window.WarnaPrimary==='function')WarnaPrimary();
     }else if(catatan.includes('adendum')){
         inputAction.value='adendum';
         $('#dt_pelatihan').addClass('d-none');
         $('#data_pegawai_tmt_100').val($('#data_pegawai_tgl_mulai_kerja').val());
         $('#data_pegawai_tgl_akhir_pelatihan').val($('#data_pegawai_tgl_akhir_kerja').val());
-        WarnaPurple();
+        if(typeof window.WarnaPurple==='function')WarnaPurple();
     }else if(catatan.includes('lanjut')){
         inputAction.value='lanjut_kontrak';
         $('#dt_pelatihan').addClass('d-none');
-        WarnaSuccess();
+        if(typeof window.WarnaSuccess==='function')WarnaSuccess();
     }else{
         inputAction.value='';
-        WarnaSuccess();
+        if(typeof window.WarnaSuccess==='function')WarnaSuccess();
     }
 }
-
 /* =========================================================
    MODE VALIDASI GAJI
 ========================================================= */
@@ -210,17 +250,9 @@ function Btn_Validasi_Gaji(user){
     $('#modal .modal-dialog').addClass('modal-dialog-scrollable');
     $('#data_pegawai_catatan_surat').val(user.gg_catatan_pegawai||'');
     $('#modalTitle').text(user.gg_catatan_pegawai||'');
-    const teks=$('#modalTitle').text()
-        .replace(/draft/gi,'Validasi Gaji ')
-        .replace(/_/g,' ')
-        .toLowerCase()
-        .replace(/\b\w/g,function(huruf){
-            return huruf.toUpperCase();
-        })
-        .replace(/\bSpk\b/gi,'SPK');
+    const teks=$('#modalTitle').text().replace(/draft/gi,'Validasi Gaji ').replace(/_/g,' ').toLowerCase().replace(/\b\w/g,function(huruf){return huruf.toUpperCase();}).replace(/\bSpk\b/gi,'SPK');
     $('#modalTitle').text(teks);
 }
-
 /* =========================================================
    BERSIHKAN FORMAT RUPIAH
 ========================================================= */
@@ -229,7 +261,6 @@ function bersihkanRupiah(form){
         this.value=this.value.replace(/[^\d]/g,'');
     });
 }
-
 /* =========================================================
    PROSES VALIDASI GAJI
 ========================================================= */
@@ -244,16 +275,14 @@ function prosesValidasiGaji(btn){
         pesanValidasiGaji('<b>VALIDASI GAGAL!</b><br>Pegawai tidak ditemukan!');
         return false;
     }
-    bersihkanRupiah(form);
     if(!form.checkValidity()){
         form.reportValidity();
         return false;
     }
+    bersihkanRupiah(form);
     form.method='POST';
     form.target='ProsesFrame';
-    $('#data_pegawai_catatan_surat').val(
-        $('#data_pegawai_catatan_surat').val().replace(/draft/gi,'Disetujui Gaji Pegawai')
-    );
+    $('#data_pegawai_catatan_surat').val($('#data_pegawai_catatan_surat').val().replace(/draft/gi,'Disetujui Gaji Pegawai'));
     const inputAction=form.querySelector('input[name="action"]');
     const action=inputAction?inputAction.value.trim():'';
     if(!action)return false;
@@ -261,7 +290,6 @@ function prosesValidasiGaji(btn){
     HTMLFormElement.prototype.submit.call(form);
     return false;
 }
-
 /* =========================================================
    PROSES TOLAK GAJI
 ========================================================= */
@@ -276,28 +304,22 @@ function prosesTolakGaji(btn){
         pesanValidasiGaji('<b>VALIDASI GAGAL!</b><br>Pegawai tidak ditemukan!');
         return false;
     }
-    bersihkanRupiah(form);
     if(!form.checkValidity()){
         form.reportValidity();
         return false;
     }
+    bersihkanRupiah(form);
     form.method='POST';
     form.target='ProsesFrame';
-    $('#data_pegawai_catatan_surat').val(
-        $('#data_pegawai_catatan_surat').val().replace(/draft/gi,'Ditolak Gaji Pegawai')
-    );
+    $('#data_pegawai_catatan_surat').val($('#data_pegawai_catatan_surat').val().replace(/draft/gi,'Ditolak Gaji Pegawai'));
     const inputAction=form.querySelector('input[name="action"]');
     if(!inputAction)return false;
     inputAction.value='tolak_'+inputAction.value.trim()+'_SPK';
-    $('#formDataPegawai')
-        .find('input,select,textarea,button')
-        .not('[name="user_id"],[name="update"],[name="action"],[name="csrf"],[name="catatan_pegawai"]')
-        .prop('disabled',true);
+    $('#formDataPegawai').find('input,select,textarea,button').not('[name="user_id"],[name="update"],[name="action"],[name="csrf"],[name="catatan_pegawai"]').prop('disabled',true);
     disableSubmit(btn);
     HTMLFormElement.prototype.submit.call(form);
     return false;
 }
-
 /* =========================================================
    HITUNG DURASI KERJA
 ========================================================= */
@@ -330,7 +352,6 @@ function hitungDurasiKerja(){
     const hari=Math.round((akhirTanggal-tanggalPatokan(bulan))/86400000);
     durasi.value=bulan+' bulan '+hari+' hari';
 }
-
 /* =========================================================
    HITUNG TOTAL GAJI
 ========================================================= */
@@ -343,16 +364,4 @@ function hitungTotalGajiPegawai(){
     });
     $('#surat_pegawai_gaji_total').val('Rp '+total.toLocaleString('id-ID'));
 }
-
-/* =========================================================
-   CETAK DATA PEGAWAI
-========================================================= */
-function cetakDataPegawai(){
-    if(typeof window.cetakDataPegawaiAsli==='function'){
-        window.cetakDataPegawaiAsli();
-    }else{
-        pesanValidasiGaji('<b>GAGAL!</b><br>Fungsi cetakDataPegawai belum tersedia.','danger');
-    }
-}
-
 })();
