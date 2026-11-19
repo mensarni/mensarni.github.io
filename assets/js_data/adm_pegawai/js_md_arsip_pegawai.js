@@ -61,7 +61,13 @@ function parseDataArsipPegawai(data){
         return {};
     }
 }
-
+    
+function isiIbuKandungArsip(user,form){
+    if(!form)return;
+    const input=form.querySelector('[name="ibu_kandung"]');
+    if(input)input.value=user.ibu_kandung??'';
+}
+    
 function bukaProsesArsipPegawai(id,userData){
     const user=parseDataArsipPegawai(userData);
     if(!user||!user.user_id){
@@ -76,12 +82,12 @@ function bukaProsesArsipPegawai(id,userData){
         $('#pegawai_user_id').val(id);
         WarnaPrimary();
         isiDataPegawai(user);
-        $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
+        isiIbuKandungArsip(user,form);
         Btn_ProsesArsip(user);
         tampilkanmodal();
     });
 }
-
+    
 function bukaArsipPegawai(id,userData){
     const user=parseDataArsipPegawai(userData);
     if(!user||!user.user_id){
@@ -96,7 +102,7 @@ function bukaArsipPegawai(id,userData){
         $('#pegawai_user_id').val(id);
         WarnaSuccess();
         isiDataPegawai(user);
-        $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
+        isiIbuKandungArsip(user,form);
         isiListArsipPegawai(user);
         Btn_ListArsip(user);
         tampilkanmodal();
@@ -107,7 +113,6 @@ function Btn_ProsesArsip(user){
     $('#modalTitle').text('Proses Update Arsip / Dokumen Pegawai');
     $('#modalNamaPegawai').text(user.nama_lengkap||user.name||'-');
     $('#modalNIPKPegawai').text(user.nipk||'-');
-    $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
     $('#FormArsipPegawai').removeClass('d-none');
     $('#boxListArsipPegawai').addClass('d-none');
     $('#btnSimpanArsipPegawai').removeClass('d-none');
