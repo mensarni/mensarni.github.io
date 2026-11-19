@@ -107,6 +107,7 @@ function Btn_ProsesArsip(user){
     $('#modalTitle').text('Proses Update Arsip / Dokumen Pegawai');
     $('#modalNamaPegawai').text(user.nama_lengkap||user.name||'-');
     $('#modalNIPKPegawai').text(user.nipk||'-');
+    $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
     $('#FormArsipPegawai').removeClass('d-none');
     $('#boxListArsipPegawai').addClass('d-none');
     $('#btnSimpanArsipPegawai').removeClass('d-none');
