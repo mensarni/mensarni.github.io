@@ -167,6 +167,7 @@ function isiCetakProfilPegawai(user){
     $('#text_pegawai_unit_usaha').text((user.unit_usaha || '-').replace(/\bcleanning\b/gi, 'CLEANING'));
     $('#text_pegawai_jabatan').text(user.jabatan||'');
     $('#text_pegawai_status_pekerja').text(user.status_pekerja||'');
+    $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
 }
 
 function isiDataKepegawaian(user){
