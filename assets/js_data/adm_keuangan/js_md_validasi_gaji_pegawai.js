@@ -18,12 +18,15 @@ window.htmlTombolValidasiGaji='';
 window.init_fungsi_validasi_gaji_pegawai=function(){
     const modalElement=document.getElementById('modal');
     window.modalValidasiGajiPegawai=null;
-    if(modalElement){
-        window.modalValidasiGajiPegawai=bootstrap.Modal.getOrCreateInstance(modalElement,{
-            backdrop:'static',
-            keyboard:false
-        });
+    if(!modalElement)return;
+    if(!window.bootstrap||!bootstrap.Modal){
+        console.error('Bootstrap Modal belum tersedia.');
+        return;
     }
+    window.modalValidasiGajiPegawai=bootstrap.Modal.getOrCreateInstance(modalElement,{
+        backdrop:'static',
+        keyboard:false
+    });
 };
 
 /* =========================================================
@@ -58,13 +61,42 @@ window.restoreTombolValidasiGaji=function(){
 };
 
 /* =========================================================
-   TUTUP MODAL LAIN SEBELUM MEMBUKA MODAL VALIDASI
+   KOSONGKAN MODAL SEBELUM MEMBUKA
+========================================================= */
+function bersihkanModalValidasiGaji(){
+    const form=document.getElementById('formDataPegawai');
+    if(form){
+        form.reset();
+        $(form).find('input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),textarea').val('');
+        $(form).find('select').prop('selectedIndex',0);
+        $(form).find('input[type="checkbox"],input[type="radio"]').prop('checked',false);
+        $(form).find('input[type="file"]').val('');
+        $(form).find('input[type="hidden"]').not('[name="csrf"],[name="_csrf"],[name="csrf_token"],[name="token"]').val('');
+        $(form).find('input[name="action"]').val('');
+        $(form).find(':input').prop('disabled',false);
+    }
+    $('#pegawai_id,#pegawai_user_id').val('');
+    $('#modalNamaPegawai,#modalNIPKPegawai,#modalTitle').text('');
+    $('#data_pegawai_catatan,#data_pegawai_catatan_surat').val('');
+    $('#formDataPegawai').removeClass('d-none');
+    $('#btnValidasiGaji').addClass('d-none').prop('disabled',false);
+    $('#btnSimpanDataPegawai').removeClass('d-none');
+    $('#btnValidasiTolakGaji').prop('disabled',false);
+    $('#boxCetakDataPegawai,#btnCetakPegawai').removeClass('d-none');
+    $('#modal .modal-dialog').removeClass('modal-dialog-scrollable');
+    $('#dt_pelatihan').removeClass('d-none');
+    const barisPelatihan=document.querySelector('#dt_pelatihan')?.closest('.row');
+    if(barisPelatihan)barisPelatihan.style.display='';
+}
+
+/* =========================================================
+   PERSIAPAN MODAL
 ========================================================= */
 function tutupModalSebelumBukaValidasi(callback){
     const modalElement=document.getElementById('modal');
     if(!modalElement){
         console.error('Modal Validasi Gaji tidak ditemukan.');
-        return;
+        return false;
     }
     const modalLain=document.querySelectorAll('.modal.show');
     modalLain.forEach(function(element){
@@ -72,7 +104,9 @@ function tutupModalSebelumBukaValidasi(callback){
             console.warn('Modal halaman lain sedang terbuka:',element.id);
         }
     });
-    callback();
+    bersihkanModalValidasiGaji();
+    if(typeof callback==='function')callback();
+    return true;
 }
 
 /* =========================================================
@@ -81,12 +115,15 @@ function tutupModalSebelumBukaValidasi(callback){
 function bukaModalValidasiGaji(){
     const modalElement=document.getElementById('modal');
     if(!modalElement)return false;
-    if(!window.bootstrap||!bootstrap.Modal)return false;
+    if(!window.bootstrap||!bootstrap.Modal){
+        console.error('Bootstrap Modal belum tersedia.');
+        return false;
+    }
     try{
-        window.modalValidasiGajiPegawai=bootstrap.Modal.getOrCreateInstance(modalElement,{
-            backdrop:'static',
-            keyboard:false
-        });
+        if(!window.modalValidasiGajiPegawai){
+            window.init_fungsi_validasi_gaji_pegawai();
+        }
+        if(!window.modalValidasiGajiPegawai)return false;
         window.modalValidasiGajiPegawai.show();
         return true;
     }catch(error){
@@ -247,28 +284,40 @@ function bukaValidasiGaji(id,userData,btn){
         return false;
     }
     if(btn)disableSubmit(btn);
-    tutupModalSebelumBukaValidasi(function(){
-        window.validasiGajiPegawaiId=id;
-        const form=document.getElementById('formDataPegawai');
-        if(form)form.reset();
-        $('#pegawai_id').val('');
-        $('#pegawai_user_id').val(id);
-        isiDataPegawai(user);
-        isiDataValidasiGaji(user);
-        Validasi_Pelatihan(user);
-        Validasi_Aksi(user);
-        hitungTotalGajiPegawai();
-        hitungDurasiKerja();
-        Btn_Validasi_Gaji(user);
-        if(!bukaModalValidasiGaji()){
+    const berhasil=tutupModalSebelumBukaValidasi(function(){
+        try{
+            window.validasiGajiPegawaiId=id;
+            $('#pegawai_id').val('');
+            $('#pegawai_user_id').val(id);
+            isiDataPegawai(user);
+            isiDataValidasiGaji(user);
+            Validasi_Pelatihan(user);
+            Validasi_Aksi(user);
+            hitungTotalGajiPegawai();
+            hitungDurasiKerja();
+            Btn_Validasi_Gaji(user);
+            if(!bukaModalValidasiGaji()){
+                window.restoreTombolValidasiGaji();
+                window.top.postMessage({
+                    type:'flash_message',
+                    message:'<b>GAGAL!</b><br>Modal Validasi Gaji gagal dibuka.',
+                    status:'danger'
+                },'*');
+            }
+        }catch(error){
+            console.error('Gagal memproses data Validasi Gaji:',error);
             window.restoreTombolValidasiGaji();
             window.top.postMessage({
                 type:'flash_message',
-                message:'<b>GAGAL!</b><br>Modal Validasi Gaji gagal dibuka.',
+                message:'<b>GAGAL!</b><br>'+String(error.message||error),
                 status:'danger'
             },'*');
         }
     });
+    if(!berhasil){
+        window.restoreTombolValidasiGaji();
+        return false;
+    }
     return true;
 }
 
@@ -302,20 +351,20 @@ function Validasi_Aksi(user){
     if(catatan.includes('edit')){
         inputAction.value='edit';
         $('#dt_pelatihan').addClass('d-none');
-        WarnaPrimary();
+        if(typeof WarnaPrimary==='function')WarnaPrimary();
     }else if(catatan.includes('adendum')){
         inputAction.value='adendum';
         $('#dt_pelatihan').addClass('d-none');
         $('#data_pegawai_tmt_100').val($('#data_pegawai_tgl_mulai_kerja').val());
         $('#data_pegawai_tgl_akhir_pelatihan').val($('#data_pegawai_tgl_akhir_kerja').val());
-        WarnaPurple();
+        if(typeof WarnaPurple==='function')WarnaPurple();
     }else if(catatan.includes('lanjut')){
         inputAction.value='lanjut_kontrak';
         $('#dt_pelatihan').addClass('d-none');
-        WarnaSuccess();
+        if(typeof WarnaSuccess==='function')WarnaSuccess();
     }else{
         inputAction.value='';
-        WarnaSuccess();
+        if(typeof WarnaSuccess==='function')WarnaSuccess();
     }
 }
 
