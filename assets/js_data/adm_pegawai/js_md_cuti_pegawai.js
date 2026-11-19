@@ -11,6 +11,7 @@ window.tanggalCutiTerpilih=[];
    INISIALISASI MODAL
 ========================================================= */
 window.init_fungsi_cuti_pegawai=function(){
+   initCutiPegawai();
     var el=document.getElementById('modal');
     if(!el)return false;
     if(window.bootstrap&&window.bootstrap.Modal){
@@ -173,6 +174,7 @@ window.btn_edit_cuti=function(id,nama,nipk){
     $('#action').val('update_cuti');
     warnaCuti('WarnaPrimary');
 };
+
 window.edit_cuti=function(data){
     data=data||{};
     var form=document.getElementById('formproses');
@@ -186,7 +188,7 @@ window.edit_cuti=function(data){
     var nama=pegawai.nama_lengkap||data.nama_lengkap||data.nama||'';
     var nipk=pegawai.nipk||data.nipk||'';
     var field=[
-        'id','user_id','status_pegawai','jenis_cuti','alasan_cuti',
+        'id','user_id','alasan_cuti',
         'tgl_mulai','tgl_selesai','jumlah_hari','alamat_cuti',
         'no_hp_selama_cuti','status_pengajuan','tanggal_pengajuan',
         'tanggal_disetujui','catatan_persetujuan','nomor_surat',
@@ -195,9 +197,23 @@ window.edit_cuti=function(data){
     ];
     field.forEach(function(id){isiInputcuti(form,id,data[id]);});
     $('#user_id').val(data.user_id||'');
-    if(typeof window.setTanggalCuti==='function')window.setTanggalCuti(data.tanggal_cuti||'[]');
-    if(Array.isArray(window.tanggalCutiTerpilih))$('#jumlah_hari').val(window.tanggalCutiTerpilih.length);
+    isiInputcuti(form,'status_pegawai',data.status_pegawai||'');
+    var statusPegawai=form.querySelector('#status_pegawai,[name="status_pegawai"]');
+    if(statusPegawai){
+        statusPegawai.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    isiInputcuti(form,'jenis_cuti',data.jenis_cuti||'');
+    var jenisCuti=form.querySelector('#jenis_cuti,[name="jenis_cuti"]');
+    if(jenisCuti){
+        jenisCuti.dispatchEvent(new Event('change',{bubbles:true}));
+    }
     isiDataPegawaicuti(pegawai);
+    if(typeof window.setTanggalCuti==='function'){
+        window.setTanggalCuti(data.tanggal_cuti||'[]');
+    }
+    if(Array.isArray(window.tanggalCutiTerpilih)){
+        $('#jumlah_hari').val(window.tanggalCutiTerpilih.length);
+    }
     ['verifikator_id','verifikator','jab_verifikator','ppk_id','ppk','jab_ppk'].forEach(function(id){
         var input=form.querySelector('[name="'+id+'"], #'+id);
         if(input)input.value=data[id]||'';
@@ -209,6 +225,7 @@ window.edit_cuti=function(data){
     window.btn_edit_cuti(data.id,nama,nipk);
     return tampilkanModalCuti();
 };
+
 
 /* =========================================================
    JENIS CUTI PKWT DAN PKWTT
@@ -593,6 +610,7 @@ function initCutiPegawai(){
             jenisCuti.appendChild(group);
         });
     });
+   
     jenisCuti.addEventListener('change',pilihJenisCuti);
     potongSaldo.addEventListener('change',function(){
         if(konfigurasiCuti.potong!=='kebijakan'){
