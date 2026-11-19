@@ -76,7 +76,7 @@ function bukaProsesArsipPegawai(id,userData){
         $('#pegawai_user_id').val(id);
         WarnaPrimary();
         isiDataPegawai(user);
-        $('#data_pegawai_ibu_kandung').val(ibu_kandung||'');
+        $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
         Btn_ProsesArsip(user);
         tampilkanmodal();
     });
