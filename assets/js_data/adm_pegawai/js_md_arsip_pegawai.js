@@ -24,11 +24,12 @@ $(document)
     e.stopPropagation();
     const id=$(this).attr('data-id')||$(this).attr('data-user-id');
     const userData=$(this).attr('data-user');
+    const ibuKandung=$(this).attr('data-ibu-kandung');
     if(!id){
         window.top.postMessage({type:'flash_message',message:'<b>GAGAL!</b><br>ID pegawai tidak ditemukan.',status:'danger'},'*');
         return false;
     }
-    bukaProsesArsipPegawai(id,userData);
+    bukaProsesArsipPegawai(id,userData,ibuKandung);
     return false;
 });
 
@@ -66,9 +67,8 @@ function isiIbuKandungArsip(user,form){
     if(!form)return;
     const input=form.querySelector('[name="ibu_kandung"]');
     if(input)input.value=user.ibu_kandung??'';
-}
     
-function bukaProsesArsipPegawai(id,userData){
+function bukaProsesArsipPegawai(id,userData,ibuKandung){
     const user=parseDataArsipPegawai(userData);
     if(!user||!user.user_id){
         window.top.postMessage({type:'flash_message',message:'<b>GAGAL!</b><br>Data pegawai tidak ditemukan.',status:'danger'},'*');
@@ -82,7 +82,8 @@ function bukaProsesArsipPegawai(id,userData){
         $('#pegawai_user_id').val(id);
         WarnaPrimary();
         isiDataPegawai(user);
-        isiIbuKandungArsip(user,form);
+        const inputIbu=form?form.querySelector('[name="ibu_kandung"]'):null;
+        if(inputIbu)inputIbu.value=ibuKandung;
         Btn_ProsesArsip(user);
         tampilkanmodal();
     });
