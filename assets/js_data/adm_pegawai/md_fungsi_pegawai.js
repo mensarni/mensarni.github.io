@@ -131,6 +131,7 @@ function isiDataProfilPegawai(user){
     $('#data_pegawai_bpjs_jkm').prop('checked', Number(user.bpjs_jkm) === 1);
     $('#data_pegawai_bpjs_jkp').prop('checked', Number(user.bpjs_jkp) === 1);
     $('#data_pegawai_ibu_kandung').val(user.ibu_kandung||'');
+    $('#data_pegawai_kode_pos').val(user.kode_pos||'');
 }
 
 function isiCetakProfilPegawai(user){
